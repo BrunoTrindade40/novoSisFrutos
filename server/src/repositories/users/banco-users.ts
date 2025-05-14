@@ -1,5 +1,5 @@
 import { User } from "../../models/users";
-import { IUsersRepository } from "./../../controllers/protocols";
+import { IUsersRepository } from "../../controllers/protocols";
 
 export class repositoryUsersDB implements IUsersRepository {
   async getUsers(): Promise<User[]> {
