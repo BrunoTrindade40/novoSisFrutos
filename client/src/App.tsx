@@ -1,8 +1,8 @@
-import Container from '@mui/material/Container';
+import AppRouter from './routes';
 function App() {
   return (
     <>
-      <Container>Hello World</Container>
+      <AppRouter></AppRouter>
     </>
   );
 }
