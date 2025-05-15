@@ -1,11 +1,8 @@
-import { useState } from "react";
-
+import Container from '@mui/material/Container';
 function App() {
-  const [count, setCount] = useState(0);
-
   return (
     <>
-      <div>Aeeeee</div>
+      <Container>Hello World</Container>
     </>
   );
 }
