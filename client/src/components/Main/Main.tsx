@@ -1,13 +1,19 @@
+import { Box, Container } from '@mui/material';
 import React from 'react';
 
-interface MainProps {
-  nome: string;
-}
+type MainProps = {
+  children: React.ReactNode;
+};
 
-export const Main: React.FC<MainProps> = (props) => {
-    return (
-        <main >
-            {props.nome}
-        </main>
-    );
+export const Main: React.FC<MainProps> = ({ children }: MainProps) => {
+  return (
+    <main>
+      <Container>
+        <Box>
+          {/* Aqui se renderiza o conteúdo JSX */}
+          {children}
+        </Box>
+      </Container>
+    </main>
+  );
 };

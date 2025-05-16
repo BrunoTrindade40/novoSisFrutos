@@ -1,0 +1,30 @@
+.footer {
+    background-color: #000;
+    color: white;
+}
+.footer .container {
+    display: flex;
+    flex-direction: row;
+    flex-wrap: wrap;
+    align-items: center;
+    justify-content: center;
+    text-align: center;
+}
+footer .container div{
+    padding: 15px 10px;
+    width: 100%;
+}
+.footer .container .desenvolvedora {
+  display: flex;
+  flex-direction: row;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+}
+.footer .container .nomeEmpresa {
+}
+.footer .container .telEmpresa {
+}
+.footer .container .enderecoEmpresa {
+}
