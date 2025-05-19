@@ -18,9 +18,29 @@ export function FormRastreamento() {
     formState: { errors },
   } = useForm<FormValues>({ resolver: zodResolver(formSchema) });
 
-  const onSubmit: SubmitHandler<FormValues> = (data) => {
+  const onSubmit: SubmitHandler<FormValues> = async (data: FormValues) => {
     console.log('Dados do formulário:', data);
     console.log('Código enviado:', data.codigo);
+
+    try {
+      const response = await fetch('http://localhost:3000/api/codigo', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({ codigo: data.codigo }),
+      });
+
+      if (!response.ok) {
+        throw new Error('Erro no envio');
+      }
+
+      const result = response.json();
+      console.log(`Resposta do Servidor:`, result);
+    } catch (error) {
+      console.error('Erro ao enviar o código:', error);
+      alert('Falha no envio.');
+    }
   };
 
   return (
