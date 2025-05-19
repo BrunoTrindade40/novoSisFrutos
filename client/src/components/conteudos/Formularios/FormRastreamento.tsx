@@ -1,7 +1,8 @@
 import { Box } from '@mui/material';
-import { useForm, type SubmitHandler } from 'react-hook-form';
+import { Controller, useForm, type SubmitHandler } from 'react-hook-form';
 import { z } from 'zod';
 import { zodResolver } from '@hookform/resolvers/zod';
+import { IMaskInput } from 'react-imask';
 
 const formSchema = z.object({
   codigo: z
@@ -12,7 +13,7 @@ const formSchema = z.object({
 type FormValues = z.infer<typeof formSchema>;
 export function FormRastreamento() {
   const {
-    register,
+    control,
     handleSubmit,
     formState: { errors },
   } = useForm<FormValues>({ resolver: zodResolver(formSchema) });
@@ -29,12 +30,19 @@ export function FormRastreamento() {
           <label htmlFor="codigo" className="block text-sm font-medium">
             Código:
           </label>
-          <input
-            type="text"
-            {...register('codigo', { required: 'Campo obrigatório' })}
-            className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm"
-            id="codigo"
+          <Controller
+            name="codigo"
+            control={control}
+            render={({ field }) => (
+              <IMaskInput
+                {...field}
+                mask={'000-000.000.000'}
+                placeholder={'000-000.000.000'}
+                unmask={false}
+              />
+            )}
           />
+
           <button
             type="submit"
             className="bg-blue-600 text-white px-4 py-2 rounded hover:bg-blue-700"
