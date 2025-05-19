@@ -1,0 +1,10 @@
+.textoDiv {
+  padding: '10px 20px';
+}
+.textoDiv .blocoTitulo {
+  text-align: center;
+  text-transform: uppercase;
+}
+.textoDiv .blocoTexto {
+  font-size: 18px;
+}
