@@ -23,13 +23,16 @@ export function FormRastreamento() {
     console.log('Código enviado:', data.codigo);
 
     try {
-      const response = await fetch('http://localhost:3000/api/codigo', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({ codigo: data.codigo }),
-      });
+      const response = await fetch(
+        'http://localhost:3000/api/produtos/codigo/',
+        {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify({ codigo: data.codigo }),
+        }
+      );
 
       if (!response.ok) {
         throw new Error('Erro no envio');
