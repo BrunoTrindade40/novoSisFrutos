@@ -1,8 +1,17 @@
-import { Box } from '@mui/material';
+import { useState } from 'react';
+import { Alert, Box, Button, Paper } from '@mui/material';
+import { CircularProgress } from '@mui/material';
 import { Controller, useForm, type SubmitHandler } from 'react-hook-form';
 import { z } from 'zod';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { IMaskInput } from 'react-imask';
+
+import type { Produto } from '../../../types/Produto';
+import { ProdutoDetalhes } from '../../Produtos/ProdutoDetalhes';
+import { buscarProdutoPorCodigo } from '../../../services/api';
+import { FormInput } from './FormInput';
+import { MensagemErro } from './MensagemErro';
+import { Loader } from './Loader';
 
 const formSchema = z.object({
   codigo: z
@@ -11,7 +20,12 @@ const formSchema = z.object({
     .regex(/^\d{3}-\d{3}\.\d{3}\.\d{3}$/, 'Formato inválido'),
 });
 type FormValues = z.infer<typeof formSchema>;
+
 export function FormRastreamento() {
+  const [produto, setProduto] = useState<Produto | null>(null);
+  const [erro, setErro] = useState<string | null>(null);
+  const [loading, setLoading] = useState(false);
+
   const {
     control,
     handleSubmit,
@@ -19,65 +33,52 @@ export function FormRastreamento() {
   } = useForm<FormValues>({ resolver: zodResolver(formSchema) });
 
   const onSubmit: SubmitHandler<FormValues> = async (data: FormValues) => {
-    console.log('Dados do formulário:', data);
-    console.log('Código enviado:', data.codigo);
+    setLoading(true);
+    setProduto(null);
+    setErro(null);
 
     try {
-      const response = await fetch(
-        'http://localhost:3000/api/produtos/codigo/',
-        {
-          method: 'POST',
-          headers: {
-            'Content-Type': 'application/json',
-          },
-          body: JSON.stringify({ codigo: data.codigo }),
-        }
-      );
+      const response = await buscarProdutoPorCodigo(data.codigo);
 
       if (!response.ok) {
-        throw new Error('Erro no envio');
+        const errorText = await response.text();
+        throw new Error(`Erro ${response.status}: ${errorText}`);
       }
 
-      const result = response.json();
-      console.log(`Resposta do Servidor:`, result);
+      const result = await response.json();
+
+      if (!result) {
+        setErro('Produto não encontrado.');
+      } else {
+        setProduto(result);
+      }
     } catch (error) {
       console.error('Erro ao enviar o código:', error);
-      alert('Falha no envio.');
+      setErro('Falha no envio. Verifique o código ou tente novamente.');
+    } finally {
+      setLoading(false);
     }
   };
 
   return (
     <>
-      <form onSubmit={handleSubmit(onSubmit)}>
-        <Box>
-          <label htmlFor="codigo" className="block text-sm font-medium">
-            Código:
-          </label>
-          <Controller
-            name="codigo"
+      <form onSubmit={handleSubmit(onSubmit)} style={{ marginBottom: '20px' }}>
+        <Paper
+          sx={{ backgroundColor: '#7CD2B1', elevation: 3, padding: '10px' }}
+        >
+          <FormInput
             control={control}
-            render={({ field }) => (
-              <IMaskInput
-                {...field}
-                mask={'000-000.000.000'}
-                placeholder={'000-000.000.000'}
-                unmask={false}
-              />
-            )}
+            name="codigo"
+            label="Código"
+            placeholder="000-000.000.000"
+            error={errors.codigo?.message}
+            loading={loading}
           />
 
-          <button
-            type="submit"
-            className="bg-blue-600 text-white px-4 py-2 rounded hover:bg-blue-700"
-          >
-            Enviar
-          </button>
-          {errors.codigo && (
-            <span className="text-red-500 text-sm">
-              {errors.codigo.message}
-            </span>
-          )}
-        </Box>
+          {loading && <Loader />}
+          {erro && <MensagemErro mensagem={erro} />}
+          {produto && <ProdutoDetalhes produto={produto} />}
+        </Paper>
       </form>
     </>
   );
