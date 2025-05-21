@@ -1,10 +1,8 @@
 import { useState } from 'react';
-import { Alert, Box, Button, Paper } from '@mui/material';
-import { CircularProgress } from '@mui/material';
-import { Controller, useForm, type SubmitHandler } from 'react-hook-form';
+import { Paper } from '@mui/material';
+import { useForm, type SubmitHandler } from 'react-hook-form';
 import { z } from 'zod';
 import { zodResolver } from '@hookform/resolvers/zod';
-import { IMaskInput } from 'react-imask';
 
 import type { Produto } from '../../../types/Produto';
 import { ProdutoDetalhes } from '../../Produtos/ProdutoDetalhes';
@@ -30,7 +28,10 @@ export function FormRastreamento() {
     control,
     handleSubmit,
     formState: { errors },
-  } = useForm<FormValues>({ resolver: zodResolver(formSchema) });
+  } = useForm<FormValues>({
+    resolver: zodResolver(formSchema),
+    shouldFocusError: false,
+  });
 
   const onSubmit: SubmitHandler<FormValues> = async (data: FormValues) => {
     setLoading(true);
@@ -39,6 +40,8 @@ export function FormRastreamento() {
 
     try {
       const response = await buscarProdutoPorCodigo(data.codigo);
+
+      console.log(response);
 
       if (!response.ok) {
         const errorText = await response.text();

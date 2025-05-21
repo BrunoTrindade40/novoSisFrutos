@@ -32,6 +32,7 @@ export function FormInput({ control,
             placeholder={placeholder}
             unmask={false}
             aria-label={label}
+            onAccept={(value: string) => field.onChange(value)}
           />
         )}
       />

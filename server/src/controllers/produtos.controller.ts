@@ -1,19 +1,19 @@
 import { Request, Response } from "express";
 import { prisma } from "../lib/prismaClient";
 import { z } from "zod";
-
 const codigoParamSchema = z.object({
-  codigo: z.string().regex(/^\d{3}-\d{3}\.\d{3}\.\d{3}$/, {
-    message: "O código deve seguir o formato XXX-XXX.XXX.XXX",
-  }),
+  codigo: z
+    .string()
+    .min(10, "Código é obrigatório")
+    .regex(/^\d{3}-\d{3}\.\d{3}\.\d{3}$/, {
+      message: "O código deve seguir o formato XXX-XXX.XXX.XXX",
+    }),
 });
 type CodigoRequestBody = z.infer<typeof codigoParamSchema>;
 
 const novoProdutoSchema = z.object({
   nome: z.string().min(1, "Nome é obrigatório"),
-  codigo: z.string().regex(/^\d{3}-\d{3}\.\d{3}\.\d{3}$/, {
-    message: "O código deve seguir o formato XXX-XXX.XXX.XXX",
-  }),
+  codigo: z.string().min(10, "Código é obrigatório"),
   descricao: z.string().optional(),
   preco: z.number().min(1, "Preço é obrigatório"),
   estoque: z.number().min(0, "Estoque é obrigatório"),
@@ -45,6 +45,7 @@ export class ProdutoController {
   ) {
     try {
       const validatedParam = codigoParamSchema.parse(req.params);
+      validatedParam.codigo = somenteNumeros(validatedParam.codigo);
       const { codigo } = validatedParam;
       if (!codigo) {
         return res.status(400).json({ error: "Código é obrigatório." });
@@ -56,15 +57,16 @@ export class ProdutoController {
       });
       return res.status(200).json(prods);
     } catch (err) {
-      console.error(err);
-      /* return res.status(500).json({ error: "Erro ao buscar Produtos." }); */
-      res.status(500).json({ error: "Erro ao buscar Produtos." });
+      res
+        .status(500)
+        .json({ error: "Erro ao buscar Produtos.", errorJson: err });
     }
   }
 
   async handleCreateProduto(req: Request, res: Response) {
     try {
       req.body.codigo = gerarCodigo();
+      console.log(req.body);
       const data = novoProdutoSchema.parse(req.body);
 
       const novoProduto = await prisma.produto.create({
@@ -83,11 +85,15 @@ export class ProdutoController {
 }
 function gerarCodigo(): string {
   const partes = [
-    Math.floor(100 + Math.random() * 900),
-    Math.floor(100 + Math.random() * 900),
-    Math.floor(100 + Math.random() * 900),
-    Math.floor(100 + Math.random() * 900),
+    Math.floor(100 + Math.random() * 900).toString(),
+    Math.floor(100 + Math.random() * 900).toString(),
+    Math.floor(100 + Math.random() * 900).toString(),
+    Math.floor(100 + Math.random() * 900).toString(),
   ];
 
-  return `${partes[0]}-${partes[1]}.${partes[2]}.${partes[3]}`;
+  return `${partes[0] + partes[1] + partes[2] + partes[3]}`;
+}
+
+function somenteNumeros(str: string): string {
+  return str.replace(/\D/g, "");
 }
