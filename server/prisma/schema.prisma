@@ -1,5 +1,6 @@
 generator client {
   provider = "prisma-client-js"
+  output   = "../src/generated/prisma"
 }
 
 datasource db {
@@ -7,28 +8,1728 @@ datasource db {
   url      = env("DATABASE_URL")
 }
 
-model Produto {
-  id        Int       @id @default(autoincrement())
-  codigo    String    @db.VarChar(20) @unique
-  nome      String
-  descricao String?
-  preco     Float
-  estoque   Int       @default(0)
-  createdAt DateTime  @default(now())
-  updatedAt DateTime  @updatedAt
-  produtor  String?
-  romaneio  String?
-  talhao    String?
-  endereco  String?
-  cidade    String?
-  colheita  DateTime?
-  chegada   DateTime?
-  embalagem String?
-  embalador String?
+model AcCamara {
+  idAcCamara       Int       @id(map: "PK_AcCamara") @default(autoincrement())
+  ACc_Descricao    String?   @db.VarChar(45)
+  ACc_DtAcerto     DateTime  @db.DateTime
+  ACc_EntSai       Int
+  FkProduto        Int
+  ACc_TpTratamento Int
+  FkTamanho        Int?
+  AcC_Digitador    String?   @db.VarChar(20)
+  AcC_DtDigitacao  DateTime? @db.DateTime
+  fkRomaneio       Int?
+  ACC_exp          Decimal?  @db.Decimal(18, 2)
+  aCC_MI           Decimal?  @db.Decimal(18, 2)
+  Romaneio         Romaneio? @relation(fields: [fkRomaneio], references: [idRomaneio], onDelete: NoAction, onUpdate: NoAction, map: "FK_AcCamara_Romaneio")
 }
 
-model User {
-  id    Int    @id @default(autoincrement())
-  name  String
-  email String @unique
+model AcessoMobile {
+  IdAcessoMobile Int     @id(map: "PK_AcessoMobile") @default(autoincrement())
+  IDAndroid      String? @db.VarChar(30)
+  Usuario        String? @db.VarChar(40)
+  Rede           String? @db.VarChar(50)
+  Descricao      String? @db.VarChar(50)
+}
+
+model AcessoMobileHistory {
+  IdAcessoMobileHistory Int       @id(map: "PK_AcessoMobileHistory") @default(autoincrement())
+  IdAndroid             String?   @db.VarChar(30)
+  Usuario               String?   @db.VarChar(40)
+  Modulo                String?   @db.VarChar(50)
+  Telefone              String?   @db.VarChar(20)
+  SSIDRede              String?   @db.VarChar(40)
+  IPservidor            String?   @db.VarChar(40)
+  Operadora             String?   @db.VarChar(40)
+  Modelo                String?   @db.VarChar(50)
+  DataAcesso            DateTime? @db.DateTime
+  StatusAcesso          Int?
+}
+
+model AcEstoque {
+  idAcEstoque        Int       @id(map: "PK_AcEstoque") @default(autoincrement())
+  AcE_Descricao      String?   @db.VarChar(45)
+  AcE_DataLancamento DateTime  @db.DateTime
+  AcE_Qtd            Decimal   @db.Decimal(18, 4)
+  AcE_EntSai         Int
+  FkProdutoALm       Int
+  AcE_PCusto         Decimal?  @db.Decimal(18, 4)
+  Digitacao          String?   @db.VarChar(20)
+  DataDigitacao      DateTime? @db.DateTime
+}
+
+/// The underlying table does not contain a valid unique identifier and can therefore currently not be handled by Prisma Client.
+model Basecompleta {
+  Idimagem               Int      @default(autoincrement())
+  img_codclassificacao   Int?
+  img_classificacao      String?  @db.VarChar(40)
+  nomeArquivo            String?  @db.VarChar(13)
+  caminho                String?  @db.VarChar(20)
+  pontomedio_col         Decimal? @db.Decimal(26, 11)
+  pontomedio_linha       Decimal? @db.Decimal(26, 11)
+  altura                 Decimal? @db.Decimal(23, 9)
+  largura                Decimal? @db.Decimal(23, 9)
+  pontomedioDoenca_col   Decimal? @db.Decimal(26, 11)
+  pontomedioDoenca_linha Decimal? @db.Decimal(26, 11)
+  alturaDoenca           Decimal? @db.Decimal(23, 9)
+  larguraDoenca          Decimal? @db.Decimal(23, 9)
+  base                   String?  @db.VarChar(6)
+  img_foto               Bytes?
+
+  @@ignore
+}
+
+model CadBanco {
+  IdCadBanco               Int            @id(map: "PK_CadBanco") @default(autoincrement())
+  CadBan_Descricao         String?        @db.VarChar(30)
+  CadBan_Agencia           String?        @db.VarChar(5)
+  CadBan_digitoAgencia     String?        @db.VarChar(2)
+  CadBan_NumeConta         String?        @db.VarChar(12)
+  CadBan_DigitoConta       String?        @db.VarChar(2)
+  CadBan_Gerente           String?        @db.VarChar(60)
+  CadBan_TelefoneGerente   String?        @db.VarChar(40)
+  CadBan_EmailGerente      String?        @db.VarChar(80)
+  CadBan_Internacional     Int?
+  Cadban_swift             String?        @db.VarChar(15)
+  CadBan_account           String?        @db.VarChar(20)
+  CadBan_nomeinternacional String?        @db.VarChar(30)
+  Cadban_CodIban           String?        @db.VarChar(30)
+  CadBan_UltCheque         Int?
+  CadBan_Mora              Decimal?       @db.Decimal(18, 2)
+  CadBan_Protesto          String?        @db.VarChar(4)
+  CadBan_Saldo             Decimal?       @db.Decimal(18, 2)
+  CadBan_Previsao          Int
+  CadBan_Carteira          String?        @db.VarChar(30)
+  CadBan_UltimoLote        Int?
+  Cadban_ultimaRemessa     Int?
+  Cadban_codConvenio       String?        @db.VarChar(20)
+  Cadban_numbanco          String?        @db.VarChar(3)
+  Cadban_habilitaCobranca  Int?
+  Cadban_nomeBanco         String?        @db.VarChar(30)
+  Cadban_tipoconvenio      Int?
+  Cadban_numeroconvenio    String?        @db.VarChar(7)
+  Cadban_nossonumero       Int?
+  Digitador                String?        @db.VarChar(50)
+  DataDigitacao            DateTime?      @db.DateTime
+  Alteracao                String?        @db.VarChar(50)
+  DataAlteracao            DateTime?      @db.DateTime
+  Cadban_obs1              String?        @db.VarChar(80)
+  Cadban_obs2              String?        @db.VarChar(80)
+  LancBancario             LancBancario[]
+}
+
+model CadCarga {
+  IdCadCarga        Int           @id(map: "PK_CadCarga") @default(autoincrement())
+  cadCar_Motorista  String?       @db.VarChar(50)
+  CadCar_Data       DateTime?     @db.Date
+  cadcar_observacao String?       @db.VarChar(100)
+  CadCar_numero     String?       @db.VarChar(10)
+  Digitacao         String?       @db.VarChar(40)
+  DataDigitacao     DateTime?     @db.DateTime
+  Alteracao         String?       @db.VarChar(40)
+  DataAlteracao     DateTime?     @db.DateTime
+  CadCargaAux       CadCargaAux[]
+}
+
+model CadCargaAux {
+  IdcadCargaAux Int         @id(map: "PK_CadCargaAux_1") @default(autoincrement())
+  fkmiboleto    Int?
+  fkcadcarga    Int?
+  CadCarga      CadCarga?   @relation(fields: [fkcadcarga], references: [IdCadCarga], onDelete: Cascade, onUpdate: NoAction, map: "FK_CadCargaAux_CadCarga")
+  MI_Boletos    MI_Boletos? @relation(fields: [fkmiboleto], references: [idmi_bol], onDelete: Cascade, onUpdate: NoAction, map: "FK_CadCargaAux_MI_Boletos")
+}
+
+model CadCheque_pre {
+  Idchequepre         Int       @id(map: "PK_CadCheque_pre") @default(autoincrement())
+  cqp_Emitente        String?   @db.VarChar(80)
+  cqp_Descricao       String?   @db.VarChar(80)
+  cqp_banco           String?   @db.VarChar(3)
+  cqp_nrcheque        String?   @db.VarChar(15)
+  cqp_valor           Decimal?  @db.Decimal(18, 2)
+  cqp_dataemissao     DateTime? @db.DateTime
+  cqp_datavencimento  DateTime? @db.DateTime
+  cqp_datarepasse     DateTime? @db.DateTime
+  cqp_motivoDevolucao String?   @db.VarChar(30)
+  fkfornecedor        Int?
+  fkcliente           Int?
+  Digitador           String?   @db.VarChar(30)
+  Digitacao           DateTime? @db.DateTime
+  Alteracao           String?   @db.VarChar(30)
+  DataAlteracao       DateTime? @db.DateTime
+  cqp_quitado         DateTime? @db.DateTime
+  cqp_obsquitacao     String?   @db.VarChar(20)
+  fkreceber           Int?
+}
+
+model CadEmbalador {
+  IdCadembalador              Int       @id(map: "PK_CadEmbalador") @default(autoincrement())
+  CadEmb_Nome                 String?   @db.VarChar(30)
+  CadEmb_Codigo               String?   @db.VarChar(3)
+  CadEmb_Status               Int?
+  CadEmb_Telefone             String?   @db.VarChar(50)
+  CadEmb_Email                String?   @db.VarChar(100)
+  Digitacao                   String?   @db.VarChar(40)
+  DataDigitacao               DateTime? @db.DateTime
+  Alteracao                   String?   @db.VarChar(40)
+  DataAlteracao               DateTime? @db.DateTime
+  fknivel                     Int?
+  FkCadEsteira                Int?
+  CadEmb_MostraNoPainel       Int?
+  CadEmb_CalculaProdutividade Int?
+}
+
+model CadEsteira {
+  IdCadEsteira     Int       @id(map: "PK_CdaEsteira") @default(autoincrement())
+  CadEst_Descricao String?   @db.VarChar(60)
+  Digitacao        String?   @db.VarChar(50)
+  DataDigitacao    DateTime? @db.DateTime
+  Alteracao        String?   @db.VarChar(50)
+  DataAlteracao    DateTime? @db.DateTime
+}
+
+model cadprevisao {
+  idCadPrevisao  Int              @id(map: "PK_cadprecisao") @default(autoincrement())
+  CadPre_semana  String?          @db.Char(5)
+  fkproduto      Int
+  Digitacao      String?          @db.VarChar(30)
+  DataDigitacao  DateTime?        @db.DateTime
+  Alteracao      String?          @db.VarChar(30)
+  DataAlteracao  DateTime?        @db.DateTime
+  CadPrevisaoAux CadPrevisaoAux[]
+}
+
+model CadPrevisaoAux {
+  IdCadPrevisaoAux Int         @id(map: "PK_CadPrevisaoAux") @default(autoincrement())
+  CadPreAux_caixas Decimal?    @db.Decimal(18, 2)
+  CadPreAux_kilos  Decimal?    @db.Decimal(18, 2)
+  CadPreAux_data   DateTime?   @db.DateTime
+  CadPreAux_talhao String?     @db.VarChar(50)
+  fkCadprevisao    Int
+  fkempresa        Int
+  cadprevisao      cadprevisao @relation(fields: [fkCadprevisao], references: [idCadPrevisao], onDelete: Cascade, onUpdate: NoAction, map: "FK_CadPrevisaoAux_cadprevisao")
+}
+
+model CaixasEmbaladas {
+  IdCaixasEmbaladas      Int       @id(map: "PK_CaixasEmbaladas") @default(autoincrement())
+  CaiEmb_qtd             Int?
+  CaiEmb_CodCaixa        String?   @db.VarChar(15)
+  CaiEmb_Status          Int?
+  CaiEmb_HoraLeitura     DateTime? @db.DateTime
+  CaiEmb_HoraPaletizacao DateTime? @db.DateTime
+  CaiEmb_CodEmbalador    Int?
+  fkromaneio             Int?
+  fkProduto              Int?
+  fkembalador            Int?
+  fkmotivodescarte       Int?
+  fknivel                Int?
+  caiemb_valor           Decimal?  @db.Decimal(18, 2)
+  fkcaixa                Int?
+
+  @@index([CaiEmb_CodCaixa], map: "IX_CaixasEmbaladas")
+  @@index([CaiEmb_CodCaixa], map: "teste")
+  @@index([CaiEmb_HoraLeitura], map: "testei")
+}
+
+model CamaraGeral {
+  idCamaraGeral    Int       @id(map: "PK_CamaraGeral") @default(autoincrement())
+  Cam_TpTratamento Int?
+  FkProduto        Int
+  fkRomaneio       Int?
+  cam_exp          Decimal?  @db.Decimal(18, 2)
+  cam_MI           Decimal?  @db.Decimal(18, 2)
+  cam_saldo        Decimal?  @db.Decimal(18, 2)
+  Romaneio         Romaneio? @relation(fields: [fkRomaneio], references: [idRomaneio], onDelete: Cascade, onUpdate: NoAction, map: "FK_CamaraGeral_Romaneio")
+
+  @@unique([fkRomaneio, FkProduto], map: "IX_CamaraGeral")
+}
+
+model CCusto {
+  idCCusto      Int       @id(map: "PK_CCusto") @default(autoincrement())
+  Ccu_NumeConta String?   @db.VarChar(15)
+  Ccu_Titulo    String?   @db.VarChar(50)
+  Digitacao     String?   @db.VarChar(50)
+  DataDigitacao DateTime? @db.DateTime
+  Alteracao     String?   @db.VarChar(50)
+  DataAlteracao DateTime? @db.DateTime
+}
+
+model ClaFiscal {
+  IdClaFiscal       Int       @id(map: "PK_ClaFiscal") @default(autoincrement())
+  Cfi_Documento     Int
+  Cfi_DtCompetencia DateTime  @db.DateTime
+  Cfi_DtLancamento  DateTime  @db.DateTime
+  Cfi_Tipo          String?   @db.VarChar(2)
+  Cfi_Valor         Decimal   @db.Decimal(18, 2)
+  Cfi_Previsao      Boolean?
+  Cfi_ARA           Int
+  Cfi_Historico     String?   @db.VarChar(30)
+  FkPConta          Int
+  Cfi_Digitador     String?   @db.VarChar(20)
+  Cfi_DtDigitacao   DateTime? @db.DateTime
+  PConta            PConta    @relation(fields: [FkPConta], references: [IdPConta], onUpdate: NoAction, map: "FK_ClaFiscal_PConta")
+}
+
+model Claims {
+  idClaimME           Int      @id(map: "PK_Cleans") @default(autoincrement())
+  ClaME_TpAbatimento  Int
+  ClaME_DataClaim     DateTime @db.DateTime
+  ClaME_Valor         Decimal  @db.Decimal(18, 2)
+  FkProduto           Int
+  FkInvAux            Int
+  Fkmotivo            Int?
+  ClaME_justificativa String?  @db.VarChar(90)
+  InvAux              InvAux   @relation(fields: [FkInvAux], references: [idInvAux], onUpdate: NoAction, map: "FK_Cle_IVA")
+}
+
+model CotacaoFruto {
+  IdcotacaoFruto  Int               @id(map: "PK_CotacaoFruto") @default(autoincrement())
+  cot_data        DateTime?         @db.DateTime
+  cot_semana      String?           @db.VarChar(5)
+  Digitacao       String?           @db.VarChar(50)
+  DataDigitacao   DateTime?         @db.DateTime
+  Alteracao       String?           @db.VarChar(30)
+  DataAlteracao   DateTime?         @db.DateTime
+  CotacaoFrutoAux CotacaoFrutoAux[]
+}
+
+model CotacaoFrutoAux {
+  IdCotacaoFrutoAux  Int           @id(map: "PK_CotacaoFrutoAux") @default(autoincrement())
+  CotAux_valorCat1   Decimal?      @db.Decimal(18, 2)
+  CotAux_valorCat2   Decimal?      @db.Decimal(18, 2)
+  FkcotacaoFruto     Int?
+  Fkproduto          Int?
+  CotAux_valorRefugo Decimal?      @db.Decimal(18, 2)
+  CotacaoFruto       CotacaoFruto? @relation(fields: [FkcotacaoFruto], references: [IdcotacaoFruto], onDelete: Cascade, map: "FK_CotacaoFrutoAux_CotacaoFrutoAux")
+}
+
+/// The underlying table does not contain a valid unique identifier and can therefore currently not be handled by Prisma Client.
+model CST {
+  CST_cod       String? @db.VarChar(2)
+  CST_descricao String? @db.NVarChar(180)
+
+  @@ignore
+}
+
+/// The underlying table does not contain a valid unique identifier and can therefore currently not be handled by Prisma Client.
+model DataFechamento {
+  Df_Data        DateTime? @db.DateTime
+  Df_Digitador   String?   @db.VarChar(30)
+  Df_DtDigitacao DateTime? @db.DateTime
+
+  @@ignore
+}
+
+model Diretorio {
+  idDiretorio Int     @id(map: "PK_Diretorio") @default(autoincrement())
+  Dir_Caminho String? @db.VarChar(80)
+}
+
+model EntAux {
+  idEntAux      Int      @id(map: "PK_EntAux") @default(autoincrement())
+  EnA_Qtd       Decimal  @db.Decimal(18, 4)
+  EnA_PCompra   Decimal  @db.Decimal(18, 4)
+  EnA_IPI       Decimal? @db.Decimal(18, 4)
+  FkEntrada     Int
+  FkProdutoAlm  Int
+  ena_PcompraUS Decimal? @db.Decimal(18, 2)
+  EnA_und       String?  @db.VarChar(3)
+  FkGrupoAlm    Int?
+  FkItemAlm     Int?
+  EnA_freteitem Decimal? @db.Decimal(18, 4)
+  Entrada       Entrada  @relation(fields: [FkEntrada], references: [idEntrada], onDelete: Cascade, onUpdate: NoAction, map: "FK_EntAux_Entrada")
+}
+
+model Entrada {
+  idEntrada        Int        @id(map: "PK_Entrada") @default(autoincrement())
+  Ent_Confirmado   Boolean?
+  Ent_Nota         String?    @db.VarChar(10)
+  Ent_DataEntrada  DateTime   @db.DateTime
+  FkPedCompra      Int
+  Ent_Obs          String?    @db.VarChar(60)
+  Ent_serie        String?    @db.VarChar(3)
+  Ent_modelo       String?    @db.VarChar(2)
+  ent_incideIpi    Int?
+  fkpcontaDebitoL  Int?
+  fkpcontaCreditoL Int?
+  fkpcontaDebitoP  Int?
+  fkpcontaCreditoP Int?
+  fkccusto         Int?
+  ent_frete        Decimal?   @db.Decimal(18, 2)
+  ent_seguro       Decimal?   @db.Decimal(18, 2)
+  ent_outros       Decimal?   @db.Decimal(18, 2)
+  ent_Totalipi     Decimal?   @db.Decimal(18, 2)
+  ent_TotalNota    Decimal?   @db.Decimal(18, 2)
+  EntAux           EntAux[]
+  PedCompra        PedCompra  @relation(fields: [FkPedCompra], references: [idPedCompra], onUpdate: NoAction, map: "FK_Ent_Ped")
+  Parcelas         Parcelas[]
+}
+
+model Fechamento {
+  idFechamento    Int      @id(map: "PK_Fechamento") @default(autoincrement())
+  Fec_NFechamento String?  @db.VarChar(10)
+  Fec_QtdRomaneio Int
+  Fec_DtPeriodoI  DateTime @db.DateTime
+  Fec_DtPeriodoF  DateTime @db.DateTime
+  FkEmpresa       Int
+  FkProduto       Int
+}
+
+model FormacaoCusto {
+  idFormacaoCusto        Int                 @id(map: "PK_FormacaoCusto")
+  fc_Nome                String?             @db.VarChar(50)
+  fkProduto              Int?
+  fc_QtdKg               Decimal?            @db.Decimal(18, 1)
+  fc_PrecoMedio          Decimal?            @db.Decimal(18, 2)
+  fc_Confins             Decimal?            @db.Decimal(18, 2)
+  fc_ContSocial          Decimal?            @db.Decimal(18, 2)
+  fc_IRPF                Decimal?            @db.Decimal(18, 2)
+  fc_PIS                 Decimal?            @db.Decimal(18, 2)
+  fc_ICMS                Decimal?            @db.Decimal(18, 2)
+  fc_Comissao            Decimal?            @db.Decimal(18, 2)
+  fc_OutrosCustos        Decimal?            @db.Decimal(18, 2)
+  fc_FreteInterno        Decimal?            @db.Decimal(9, 3)
+  fc_FreteNacional       Decimal?            @db.Decimal(18, 2)
+  fc_TarifaAlfandegaria  Decimal?            @db.Decimal(18, 2)
+  fc_MargemPVenda        Int?
+  fc_MargemDesejada      Decimal?            @db.Decimal(18, 2)
+  fc_PrecoVenda          Decimal?            @db.Decimal(18, 2)
+  fc_QtdCxPalet          Int?
+  fc_Funrural            Decimal?            @db.Decimal(18, 2)
+  fc_CaixasTransportadas Decimal?            @db.Decimal(18, 0)
+  fc_DataInicial         DateTime?           @db.DateTime
+  fc_DataFinal           DateTime?           @db.DateTime
+  fc_QtdCxRateio         Int?
+  fc_qtdKgrateio         Decimal?            @db.Decimal(18, 2)
+  Datadigitacao          DateTime?           @db.DateTime
+  Digitacao              String?             @db.VarChar(50)
+  Alteracao              String?             @db.VarChar(50)
+  DataAlteracao          DateTime?           @db.DateTime
+  fc_tipoCusto           Int?
+  fc_extraKG             Decimal?            @db.Decimal(18, 2)
+  FormCustoAux           FormCustoAux[]
+  FormCustoIndireto      FormCustoIndireto[]
+}
+
+model FormCustoAux {
+  idFormCustoAux      Int            @id(map: "PK_FormCustoAux") @default(autoincrement())
+  fkProdutoAlm        Int?
+  fca_Qtd             Decimal?       @db.Decimal(18, 4)
+  fca_Unidade         String?        @db.VarChar(3)
+  fca_Valor           Decimal?       @db.Decimal(18, 2)
+  fca_Total           Decimal?       @db.Decimal(18, 2)
+  fkFormacaoCusto     Int?
+  fca_tipo            Int?
+  fca_BaixaAutomatica Int?
+  FormacaoCusto       FormacaoCusto? @relation(fields: [fkFormacaoCusto], references: [idFormacaoCusto], onDelete: Cascade, onUpdate: NoAction, map: "FK_FormCustoAux_FormacaoCusto")
+}
+
+model FormCustoIndireto {
+  idFormacaoCustoInd  Int            @id(map: "PK_FormCustoIndireto") @default(autoincrement())
+  fkPconta            Int?
+  fkFormacaoCusto     Int?
+  FCI_valor           Decimal?       @db.Decimal(18, 2)
+  prov                String?        @db.VarChar(50)
+  FCI_percentual      Decimal?       @db.Decimal(18, 2)
+  FCI_valorR_         Decimal?       @map("FCI_valorR$") @db.Decimal(18, 2)
+  fci_percentualKilos Decimal?       @db.Decimal(9, 2)
+  FormacaoCusto       FormacaoCusto? @relation(fields: [fkFormacaoCusto], references: [idFormacaoCusto], onDelete: Cascade, onUpdate: NoAction, map: "FK_FormCustoIndireto_FormacaoCusto")
+  PConta              PConta?        @relation(fields: [fkPconta], references: [IdPConta], onDelete: NoAction, onUpdate: NoAction, map: "FK_FormCustoIndireto_PConta")
+
+  @@unique([fkFormacaoCusto, fkPconta], map: "IX_FormCustoIndireto")
+}
+
+model Formula {
+  idFormula   Int     @id(map: "PK_Formula") @default(autoincrement())
+  For_NomeFor String? @db.VarChar(20)
+  For_Titulo  String? @db.VarChar(30)
+  For_Formula String  @db.Text
+}
+
+/// The underlying table does not contain a valid unique identifier and can therefore currently not be handled by Prisma Client.
+model grafprov {
+  projecao String?  @db.VarChar(20)
+  QtdCX    Decimal? @db.Decimal(18, 2)
+  custo    Decimal? @db.Decimal(18, 3)
+  lucro    Decimal? @db.Decimal(18, 3)
+
+  @@ignore
+}
+
+model img_lote {
+  IDimagemRomaneio Int       @id(map: "PK_img_lote") @default(autoincrement())
+  Fkromaneio       Int?
+  img_descricao    String?   @db.VarChar(80)
+  img_foto_numero  Int?
+  img_localizacao  Int?
+  img_Setor        Int?
+  img_nomesetor    String?   @db.VarChar(50)
+  img_caminho      String?   @db.VarChar(100)
+  img_foto         String?   @db.VarChar(100)
+  img_video        Bytes?
+  img_fototamanho  Int?
+  img_fotobinary   Bytes?
+  img_datainclusao DateTime? @db.DateTime
+  Romaneio         Romaneio? @relation(fields: [Fkromaneio], references: [idRomaneio], onDelete: Cascade, onUpdate: NoAction, map: "FK_img_lote_Romaneio")
+}
+
+model img_palet {
+  IdimagePalet           Int        @id(map: "PK_img_palet") @default(autoincrement())
+  ImgP_Tipodoc           Int?
+  imgP_descricao         String?    @db.VarChar(80)
+  imgP_setor             Int?
+  imgP_nomesetor         String?    @db.VarChar(40)
+  fkpalet_Boleta         Int?
+  imgP_localizacao       Int?
+  imgP_Caminho           String?    @db.VarChar(100)
+  imgP_foto              String?    @db.VarChar(100)
+  imgP_fotobinary        Bytes?
+  imgP_fototamanho       Int?
+  img_Palet_IncDigitador String?    @db.VarChar(50)
+  img_Palet_IncData      DateTime?  @db.DateTime
+  img_Palet_AltDigitador String?    @db.VarChar(50)
+  img_Palet_AltData      DateTime?  @db.DateTime
+  img_palet              img_palet  @relation("img_paletToimg_palet", fields: [IdimagePalet], references: [IdimagePalet], onUpdate: NoAction, map: "FK_img_palet_img_palet")
+  other_img_palet        img_palet? @relation("img_paletToimg_palet")
+}
+
+/// The underlying table does not contain a valid unique identifier and can therefore currently not be handled by Prisma Client.
+model importaCobranca {
+  idreceber   Int?
+  fatura      String?  @db.VarChar(20)
+  descricao   String?  @db.VarChar(40)
+  empresa     String?  @db.VarChar(40)
+  emissao     String?  @db.VarChar(50)
+  vencimento  String?  @db.VarChar(50)
+  pagamento   String?  @db.VarChar(50)
+  valor       Decimal? @db.Decimal(18, 2)
+  acrescimos  Decimal? @db.Decimal(18, 2)
+  descontos   Decimal? @db.Decimal(18, 2)
+  total       Decimal? @db.Decimal(18, 2)
+  obs         String?  @db.VarChar(50)
+  ocorrencia  String?  @db.VarChar(60)
+  status      Int?
+  StatusFinal String?  @db.VarChar(70)
+
+  @@ignore
+}
+
+model InvAux {
+  idInvAux           Int      @id(map: "PK_InvAux") @default(autoincrement())
+  FkInvoice          Int
+  FkPlist            Int
+  FkProduto          Int
+  InA_VlrProduto     Decimal  @db.Decimal(18, 2)
+  InA_VlrDesconto    Decimal  @db.Decimal(18, 2)
+  ina_fairTrade      Decimal? @db.Decimal(18, 2)
+  ina_fairtradeTipo  Int?
+  FkCaixa            Int?
+  fkmarcaCaixa       Int?
+  Ina_QtdCaixa       Int?
+  Ina_und            String?  @db.VarChar(3)
+  Ina_CustoIndireto  Decimal? @db.Decimal(9, 3)
+  InA_CustoEmbalagem Decimal  @db.Decimal(9, 3)
+  Ina_Custofrete     Decimal? @db.Decimal(9, 3)
+  Ina_CustoVendas    Decimal? @db.Decimal(9, 3)
+  Ina_CustoFruta     Decimal? @db.Decimal(9, 3)
+  Ina_CustoUnitario  Decimal? @db.Decimal(9, 3)
+  Ina_CustoTotal     Decimal? @db.Decimal(9, 3)
+  ina_qtdFruta       Decimal? @db.Decimal(9, 2)
+  ina_extraKg        Decimal? @db.Decimal(9, 3)
+  fkcusto            Int?
+  fktamanho          Int?
+  ina_qtdFrutoCaixa  Int?
+  Claims             Claims[]
+  Invoice            Invoice  @relation(fields: [FkInvoice], references: [idInvoice], onDelete: Cascade, onUpdate: NoAction, map: "FK_InvAux_Invoice")
+}
+
+model Invoice {
+  idInvoice            Int                   @id(map: "PK_Invoice") @default(autoincrement())
+  Inv_DtInvoice        DateTime              @db.DateTime
+  Inv_Numero           String?               @db.VarChar(7)
+  Inv_cfop             String?               @db.VarChar(5)
+  Inv_Natureza         String?               @db.VarChar(60)
+  Inv_TpEmbarque       Int
+  inv_fairTrade        Decimal?              @db.Decimal(10, 2)
+  inv_FairtradeTipo    Int?
+  inv_FairtradeID      String?               @db.VarChar(10)
+  Inv_Obs              String?               @db.VarChar(100)
+  Inv_Frete            Decimal?              @db.Decimal(18, 2)
+  Inv_TipoFrete        Int?
+  Inv_ResponsavelFrete Int?
+  Inv_PLiquido         Decimal?              @db.Decimal(18, 2)
+  Inv_PBruto           Decimal?              @db.Decimal(18, 2)
+  Inv_FaturaFrete      DateTime              @db.DateTime
+  Inv_FaturaInvoice    DateTime              @db.DateTime
+  FkTpCobranca1        Int?
+  FkTpCobranca2        Int?
+  FkPlist              Int
+  fkBanco              Int?
+  Inv_Moeda            Int?
+  Inv_nota             String?               @db.VarChar(10)
+  inv_QtdPalet         Int?
+  exporta              Int?
+  inv_despNome         String?               @db.VarChar(60)
+  inv_despEndereco     String?               @db.VarChar(60)
+  inv_despBairro       String?               @db.VarChar(60)
+  inv_terminal         String?               @db.VarChar(60)
+  inv_pNominal         Decimal?              @db.Decimal(18, 2)
+  Digitacao            String?               @db.VarChar(50)
+  DataDigitacao        DateTime?             @db.DateTime
+  alteracao            String?               @db.VarChar(50)
+  DataAlteracao        DateTime?             @db.DateTime
+  InvAux               InvAux[]
+  Ocorrencias_invoice  Ocorrencias_invoice[]
+}
+
+model LancBancario {
+  IdLancBancario     Int       @id(map: "PK_LancBancario") @default(autoincrement())
+  Lba_DataLancamento DateTime  @db.DateTime
+  Lba_Historico      String?   @db.VarChar(90)
+  Lba_Tipo           String?   @db.VarChar(2)
+  Lba_Transferencia  Int
+  Lba_Valor          Decimal   @db.Decimal(18, 2)
+  Lba_Saldo          Decimal   @db.Decimal(18, 2)
+  FkBanco            Int
+  Lba_NumCheque      String?   @db.VarChar(10)
+  Lba_Documento      String?   @db.VarChar(20)
+  Digitacao          String?   @db.VarChar(25)
+  DataDigitacao      DateTime? @db.DateTime
+  Lba_StatusChq      Int?
+  CadBanco           CadBanco  @relation(fields: [FkBanco], references: [IdCadBanco], onUpdate: NoAction, map: "FK_LancBancario_LancBancario")
+}
+
+model LanCcusto {
+  IdLanCcusto Int      @id(map: "PK_CenCusto") @default(autoincrement())
+  LanCc_Valor Decimal? @db.Decimal(18, 2)
+  FkClafiscal Int?
+  FkPConta    Int?
+  FkCCusto    Int?
+}
+
+model LancEstoque {
+  IdLancEstoque      Int       @id(map: "PK_LancEstoque") @default(autoincrement())
+  LEs_DataLancamento DateTime  @db.DateTime
+  LEs_Documento      Int?
+  LEs_Tipo           Int
+  LEs_Historico      String?   @db.VarChar(70)
+  LEs_Qtd            Decimal   @db.Decimal(18, 4)
+  LEs_Saldo          Decimal   @db.Decimal(18, 4)
+  FkProdutoAlm       Int
+  FkGrupoAlm         Int
+  FkItemAlm          Int
+  LEs_PCusto         Decimal?  @db.Decimal(18, 4)
+  LEs_PCompra        Decimal?  @db.Decimal(18, 4)
+  les_digitador      String?   @db.VarChar(40)
+  les_dtdigitacao    DateTime? @db.DateTime
+}
+
+model MI_BoletoAux {
+  idmi_bolaux             Int         @id(map: "PK_MI_BoletoAux") @default(autoincrement())
+  MIBolaux_qtdcx          Decimal?    @db.Decimal(18, 2)
+  MIBolaux_qtdkg          Decimal?    @db.Decimal(18, 2)
+  mibolaux_und            String?     @db.VarChar(3)
+  MIBolaux_ValorUnit      Decimal?    @db.Decimal(18, 3)
+  MIBolaux_Desconto       Decimal?    @db.Decimal(18, 2)
+  MIBolaux_Total          Decimal?    @db.Decimal(18, 2)
+  MIBolaux_PesoCx         Decimal?    @db.Decimal(18, 2)
+  MIBolaux_Claims         Decimal?    @db.Decimal(18, 2)
+  fkMIBoleto              Int
+  fkProduto               Int
+  fkCaixa                 Int
+  fkTamanho               Int?
+  Mibolaux_CustoIndireto  Decimal?    @db.Decimal(9, 3)
+  Mibolaux_CustoEmbalagem Decimal?    @db.Decimal(9, 3)
+  Mibolaux_Custofrete     Decimal?    @db.Decimal(9, 3)
+  Mibolaux_CustoVendas    Decimal?    @db.Decimal(9, 3)
+  Mibolaux_CustoFruta     Decimal?    @db.Decimal(9, 3)
+  Mibolaux_CustoUnitario  Decimal?    @db.Decimal(9, 3)
+  Mibolaux_CustoTotal     Decimal?    @db.Decimal(9, 3)
+  fkcusto                 Int?
+  mibolAux_qtdFruta       Decimal?    @db.Decimal(9, 2)
+  fkmarcacaixa            Int?
+  MIBolAux_qtdFrutosCaixa Int?
+  MI_Boletos              MI_Boletos  @relation(fields: [fkMIBoleto], references: [idmi_bol], onDelete: Cascade, onUpdate: NoAction, map: "FK_MI_BoletoAux_MI_Boletos")
+  MI_Claims               MI_Claims[]
+  MI_Lotes                MI_Lotes[]
+}
+
+model mi_BoletoPalet {
+  idmibolPalet Int         @id(map: "PK_mi_bolPalet") @default(autoincrement())
+  fkmiboleto   Int?
+  fkpalet      Int?
+  MI_Boletos   MI_Boletos? @relation(fields: [fkmiboleto], references: [idmi_bol], onDelete: Cascade, onUpdate: NoAction, map: "FK_mi_BoletoPalet_MI_Boletos")
+  Palet        Palet?      @relation(fields: [fkpalet], references: [idPalet], onDelete: NoAction, onUpdate: NoAction, map: "FK_mi_BoletoPalet_Palet")
+}
+
+model MI_Boletos {
+  idmi_bol              Int                  @id(map: "PK_MI_Boletos") @default(autoincrement())
+  MIBol_Data            DateTime             @db.DateTime
+  MIBol_NrBoleto        String?              @db.VarChar(10)
+  mibol_Nota            String?              @db.VarChar(11)
+  Mibol_cfop            String?              @db.VarChar(5)
+  mibol_natureza        String?              @db.VarChar(50)
+  MIBol_Comissao        Decimal?             @db.Decimal(12, 2)
+  MIBol_TpSaida         Int?
+  MIBol_Obs             String?              @db.VarChar(60)
+  MIBol_pesoliquido     Decimal?             @db.Decimal(18, 2)
+  MIBol_pesobruto       Decimal?             @db.Decimal(18, 2)
+  MIBol_Total           Decimal?             @db.Decimal(18, 2)
+  MIBol_Claims          Decimal?             @db.Decimal(18, 2)
+  MIBol_TotalBruto      Decimal?             @db.Decimal(18, 2)
+  MIBol_DtVencimento    DateTime?            @db.DateTime
+  MIBol_desconto        Decimal?             @db.Decimal(18, 2)
+  miBol_confirmado      Int?
+  miBOL_frete           Decimal?             @db.Decimal(18, 2)
+  miBOL_tpfrete         Int?
+  miBOL_acrescimo       Decimal?             @db.Decimal(18, 2)
+  mibol_conferido       Int?
+  mibol_Faturamento     String?              @db.VarChar(30)
+  mibol_DataFaturamento DateTime?            @db.DateTime
+  mibol_motorista       String?              @db.VarChar(50)
+  Mibol_custoGeral      Decimal?             @db.Decimal(9, 2)
+  mibol_qtdPalets       Int?
+  mibol_desconto2       Decimal?             @db.Decimal(18, 2)
+  Fkvendedor            Int?
+  fkempresa             Int
+  fkTipoCobranca        Int?
+  Alteracao             String?              @db.VarChar(40)
+  DataAlteracao         DateTime?            @db.DateTime
+  Digitacao             String?              @db.VarChar(40)
+  DataDigitacao         DateTime             @db.DateTime
+  Exporta               Int?
+  MIBol_Refugo          Int?
+  mibol_carga           Int?
+  fkunidadeOperacional  Int?
+  mibol_FrutoProcessado Int?
+  prov                  Decimal?             @db.Decimal(18, 2)
+  CadCargaAux           CadCargaAux[]
+  MI_BoletoAux          MI_BoletoAux[]
+  mi_BoletoPalet        mi_BoletoPalet[]
+  ocorrencias_boleto    ocorrencias_boleto[]
+}
+
+model MI_Claims {
+  idmiclaims       Int          @id(map: "PK_MI_Claims") @default(autoincrement())
+  MICl_Data        DateTime     @db.DateTime
+  MICl_Digitador   String?      @db.VarChar(30)
+  MICl_DtDigitacao DateTime     @db.DateTime
+  MICl_Valor       Decimal?     @db.Decimal(18, 2)
+  fkmotivo         Int
+  fkMIBolAux       Int
+  MIcl_Doc         String?      @db.VarChar(30)
+  fkPContaD        Int?
+  fkPContaC        Int?
+  MICl_obs         String?      @db.VarChar(200)
+  MI_BoletoAux     MI_BoletoAux @relation(fields: [fkMIBolAux], references: [idmi_bolaux], onDelete: Cascade, onUpdate: NoAction, map: "FK_MI_Claims_MI_BoletoAux")
+}
+
+model MI_Lotes {
+  IDmilotes        Int          @id(map: "PK_MI_Lotes") @default(autoincrement())
+  MIlote_qtdcx     Decimal?     @db.Decimal(10, 2)
+  MIlote_qtdKg     Decimal?     @db.Decimal(18, 2)
+  MILote_tpestoque Int?
+  FKMiBolAux       Int
+  Fkromaneio       Int
+  fkpalet          Int?
+  milote_maturacao Int?
+  MI_BoletoAux     MI_BoletoAux @relation(fields: [FKMiBolAux], references: [idmi_bolaux], onDelete: Cascade, onUpdate: NoAction, map: "FK_MI_Lotes_MI_BoletoAux")
+  Romaneio         Romaneio     @relation(fields: [Fkromaneio], references: [idRomaneio], onUpdate: NoAction, map: "FK_MI_Lotes_Romaneio")
+
+  @@unique([FKMiBolAux, Fkromaneio, MILote_tpestoque, fkpalet], map: "IX_MI_Lotes")
+}
+
+model MI_Parcelas {
+  idmiParcelas      Int      @id(map: "PK_MI_Parcelas") @default(autoincrement())
+  MIPar_DataParcela DateTime @db.DateTime
+  MIPar_Valor       Decimal  @db.Decimal(18, 2)
+  mipar_desconto    Decimal? @db.Decimal(18, 2)
+  MIPar_liquido     Decimal? @db.Decimal(18, 2)
+  FkTipoCobranca    Int?
+  FkMIBoleto        Int
+}
+
+model MovEmbalagem {
+  idmovembalagem    Int       @id(map: "PK_MovEmbalagem") @default(autoincrement())
+  MEmb_Historico    String?   @db.VarChar(30)
+  MEmb_Data         DateTime? @db.DateTime
+  MEmb_Documento    Int?
+  MEmb_TpOperacao   Int?
+  MEmb_TpTratamento Int?
+  MEmb_QtdI         Decimal?  @db.Decimal(18, 2)
+  MEmb_SaldoI       Decimal?  @db.Decimal(18, 2)
+  MEmb_QtdII        Decimal?  @db.Decimal(18, 2)
+  MEmb_SaldoII      Decimal?  @db.Decimal(18, 2)
+  MEmb_Usuario      String?   @db.VarChar(30)
+  MEmb_DtDigitacao  DateTime? @db.DateTime
+  fkProdutoAlm      Int?
+  fkTamanho         Int?
+  fkCaixa           Int?
+  fkMarcaCaixa      Int?
+}
+
+model MovEstoque {
+  idMovEstoque        Int       @id(map: "PK_MovEstoque") @default(autoincrement())
+  MovEst_Historico    String?   @db.VarChar(30)
+  MovEst_Data         DateTime? @db.DateTime
+  MovEst_Documento    Int?
+  MovEst_TpOperacao   Int?
+  MovEst_TpTratamento Int?
+  fkProduto           Int?
+  MovEst_QtdMatII     Decimal?  @db.Decimal(18, 2)
+  MovEst_SaldoII      Decimal?  @db.Decimal(18, 2)
+  MovEst_Usuario      String?   @db.VarChar(30)
+  MovEst_DtDigitacao  DateTime? @db.DateTime
+  MovEst_Lote         String?   @db.VarChar(15)
+  MovEst_qtd          Decimal?  @db.Decimal(18, 2)
+  MovEst_saldo        Decimal?  @db.Decimal(18, 2)
+  fkromaneio          Int?
+}
+
+model MovExportacao {
+  idMovExportacao   Int       @id(map: "PK_MovExportacao") @default(autoincrement())
+  MExp_Historico    String?   @db.VarChar(30)
+  MExp_Data         DateTime? @db.DateTime
+  MExp_Documento    Int?
+  MExp_TpOperacao   Int?
+  MExp_TpTratamento Int?
+  fkProduto         Int?
+  MExp_QtdMatII     Decimal?  @db.Decimal(18, 2)
+  MExp_SaldoII      Decimal?  @db.Decimal(18, 2)
+  MExp_Usuario      String?   @db.VarChar(30)
+  MExp_DtDigitacao  DateTime? @db.DateTime
+  MExp_Lote         String?   @db.VarChar(15)
+  Mexp_qtd          Decimal?  @db.Decimal(18, 2)
+  Mexp_saldo        Decimal?  @db.Decimal(18, 2)
+  fkromaneio        Int?
+}
+
+model MovMercadoInterno {
+  idMovMercadoInterno Int       @id(map: "PK_MovMercadoInterno") @default(autoincrement())
+  Mmi_Historico       String?   @db.VarChar(30)
+  Mmi_Data            DateTime? @db.DateTime
+  Mmi_Documento       Int?
+  Mmi_TpTratamento    Int?
+  Mmi_TpOperacao      Int?
+  fkProduto           Int?
+  Mmi_QtdQuente       Decimal?  @db.Decimal(18, 2)
+  Mmi_SaldoQuente     Decimal?  @db.Decimal(18, 2)
+  Mmi_Usuario         String?   @db.VarChar(30)
+  Mmi_DtDigitacao     DateTime? @db.DateTime
+  Mmi_Lote            String?   @db.VarChar(15)
+  Mmi_qtd             Decimal?  @db.Decimal(18, 2)
+  Mmi_saldo           Decimal?  @db.Decimal(18, 2)
+  fkromaneio          Int?
+}
+
+model Nivel {
+  IdNivel       Int        @id(map: "PK_Nivel") @default(autoincrement())
+  niv_descricao String?    @db.VarChar(50)
+  niv_valorCat1 Decimal?   @db.Decimal(18, 3)
+  niv_valorCat2 Decimal?   @db.Decimal(18, 3)
+  Digitacao     String?    @db.VarChar(50)
+  DataDigitacao DateTime?  @db.DateTime
+  Alteracao     String?    @db.VarChar(50)
+  DataAlteracao DateTime?  @db.DateTime
+  NivelAux      NivelAux[]
+}
+
+model NivelAux {
+  IdnivelAux   Int      @id(map: "PK_NivelAux") @default(autoincrement())
+  Fknivel      Int?
+  fkproduto    Int?
+  fkcaixa      Int?
+  NivAux_valor Decimal? @db.Decimal(18, 3)
+  Nivel        Nivel?   @relation(fields: [Fknivel], references: [IdNivel], onDelete: Cascade, onUpdate: NoAction, map: "FK_NivelAux_Nivel")
+}
+
+model ocorrencias_boleto {
+  idocorrencia Int        @id(map: "PK_ocorrencias_boleto") @default(autoincrement())
+  fkboleto     Int
+  observacao   String?    @db.VarChar(8000)
+  MI_Boletos   MI_Boletos @relation(fields: [fkboleto], references: [idmi_bol], onDelete: Cascade, onUpdate: NoAction, map: "FK_ocorrencias_boleto_MI_Boletos")
+}
+
+model Ocorrencias_invoice {
+  idocorrencia Int      @id(map: "PK_Ocorrencias_invoice") @default(autoincrement())
+  observacao   String?  @db.VarChar(8000)
+  fkinvoice    Int?
+  Invoice      Invoice? @relation(fields: [fkinvoice], references: [idInvoice], onDelete: Cascade, onUpdate: NoAction, map: "FK_Ocorrencias_invoice_Invoice")
+}
+
+model ocorrencias_Pagar {
+  idOcorrencia Int     @id(clustered: false, map: "PK_ocorrencias_pagar") @default(autoincrement())
+  observacao   String? @db.VarChar(8000)
+  fkPagar      Int     @unique(map: "IX_ocorrencias_pagar")
+  Pagar        Pagar   @relation(fields: [fkPagar], references: [IdPagar], onDelete: Cascade, onUpdate: NoAction, map: "FK_ocorrencias_Pagar_Pagar")
+}
+
+model ocorrencias_Receber {
+  idOcorrencia Int     @id(clustered: false, map: "PK_ocorrencias_Receber") @default(autoincrement())
+  observacao   String? @db.VarChar(8000)
+  fkReceber    Int     @unique(map: "IX_ocorrencias_Receber")
+  Receber      Receber @relation(fields: [fkReceber], references: [IdReceber], onDelete: Cascade, onUpdate: NoAction, map: "FK_ocorrencias_Receber_Receber")
+}
+
+model ocorrencias_romaneio {
+  idOcorrencia Int      @id(clustered: false, map: "PK_ocorrencias_romaneio") @default(autoincrement())
+  observacao   String?  @db.VarChar(8000)
+  fkromaneio   Int      @unique(map: "IX_ocorrencias_romaneio")
+  Romaneio     Romaneio @relation(fields: [fkromaneio], references: [idRomaneio], onDelete: Cascade, onUpdate: NoAction, map: "FK_ocorrencias_romaneio_Romaneio")
+}
+
+model OpeAux {
+  IdOpeAux      Int      @id(map: "PK_OpeAux") @default(autoincrement())
+  OpeAux_Rateio Decimal  @db.Decimal(18, 2)
+  fkOperacao    Int
+  fkPConta      Int
+  OpeAux_Tipo   String?  @db.VarChar(2)
+  fkccusto      Int?
+  Operacao      Operacao @relation(fields: [fkOperacao], references: [idOperacao], onDelete: Cascade, onUpdate: NoAction, map: "FK_OpeAux_Operacao")
+  PConta        PConta   @relation(fields: [fkPConta], references: [IdPConta], onUpdate: NoAction, map: "FK_OpeAux_PConta")
+}
+
+model Operacao {
+  idOperacao    Int       @id(map: "PK_Operacao")
+  Ope_Descricao String?   @db.VarChar(50)
+  Ope_Tipo      Int
+  Digitacao     String?   @db.VarChar(50)
+  DataDigitacao DateTime? @db.DateTime
+  Alteracao     String?   @db.VarChar(50)
+  DataAlteracao DateTime? @db.DateTime
+  OpeAux        OpeAux[]
+}
+
+model Pagar {
+  IdPagar             Int                @id(map: "PK_Apagar") @default(autoincrement())
+  pag_idoriginal      Int?
+  Pag_Fatura          String?            @db.VarChar(50)
+  Pag_Parcela         String?            @db.VarChar(5)
+  Pag_Descricao       String?            @db.VarChar(45)
+  Pag_Confirmado      Boolean?
+  Pag_DataEmissao     DateTime?          @db.DateTime
+  Pag_DataCompetencia DateTime?          @db.DateTime
+  Pag_DataVencimento  DateTime?          @db.DateTime
+  Pag_Valor           Decimal            @db.Decimal(18, 2)
+  Pag_Valor_US        Decimal?           @db.Decimal(18, 2)
+  Pag_Documento       String?            @db.VarChar(30)
+  Pag_Obs             String?            @db.VarChar(60)
+  Pag_ValorAcrescimo  Decimal?           @db.Decimal(18, 2)
+  Pag_ValorDesconto   Decimal?           @db.Decimal(18, 2)
+  Pag_ValorPagto      Decimal?           @db.Decimal(18, 2)
+  Pag_ValorPagto_US   Decimal?           @db.Decimal(18, 2)
+  Pag_DataPagto       DateTime?          @db.DateTime
+  Pag_NumCheque       String?            @db.VarChar(10)
+  Pag_DataAutorizacao DateTime?          @db.DateTime
+  Pag_Usuario         String?            @db.VarChar(10)
+  Pag_Cheque          Boolean?           @default(false, map: "DF__Pagar__Pag_Chequ__6068FB9B")
+  Pag_datacheque      DateTime?          @db.DateTime
+  FkBanco             Int?
+  FkEmpresa           Int?
+  Digitacao           String?            @db.VarChar(30)
+  DataDigitacao       DateTime?          @db.DateTime
+  Alteracao           String?            @db.VarChar(30)
+  DataAlteracao       DateTime?          @db.DateTime
+  fktipoCobranca      Int?
+  ocorrencias_Pagar   ocorrencias_Pagar?
+}
+
+model Palet {
+  idPalet                 Int              @id(map: "PK_Palet") @default(autoincrement())
+  Pal_Numero              String?          @db.VarChar(8)
+  pal_etiqueta            Bytes?
+  Pal_DtPalet             DateTime?        @db.DateTime
+  Pal_Semana              String?          @db.VarChar(5)
+  Pal_Peso                Decimal?         @db.Decimal(18, 2)
+  Pal_Turno               String?          @db.VarChar(1)
+  Pal_Paletizador         String?          @db.VarChar(30)
+  Pal_TpTratamento        Int?
+  Pal_Plist               String?          @db.VarChar(20)
+  Pal_DtEmbarque          DateTime?        @db.DateTime
+  Pal_Digitador           String?          @db.VarChar(20)
+  Pal_DtDigitacao         DateTime?        @db.DateTime
+  pal_obs                 String?          @db.VarChar(60)
+  pal_fumigacao           String?          @db.VarChar(6)
+  pal_lacre               String?          @db.VarChar(8)
+  pal_tara                Decimal?         @db.Decimal(18, 2)
+  Pal_qtdMinima           Int?
+  Pal_qtdMaxima           Int?
+  pal_tpmercado           Int?
+  Pal_DiferencaPeso       Decimal?         @db.Decimal(10, 2)
+  Pal_DataEncerramento    DateTime?        @db.DateTime
+  Pal_UsuarioEncerramento String?          @db.VarChar(50)
+  pal_clientesugerido     String?          @db.VarChar(50)
+  FkclienteSugerido       Int?
+  pal_alteracao           String?          @db.VarChar(40)
+  pal_dtalteracao         DateTime?        @db.DateTime
+  Palet_IncDigitador      String?          @db.VarChar(50)
+  Palet_IncData           DateTime?        @db.DateTime
+  Palet_AltDigitador      String?          @db.VarChar(50)
+  Palet_AltData           DateTime?        @db.DateTime
+  FkCadtipoPalet          Int?
+  idprov                  Int?
+  mi_BoletoPalet          mi_BoletoPalet[]
+  Palet                   Palet            @relation("PaletToPalet", fields: [idPalet], references: [idPalet], onUpdate: NoAction, map: "FK_Palet_Palet")
+  other_Palet             Palet?           @relation("PaletToPalet")
+  PaletCaixas             PaletCaixas[]
+  PListAux                PListAux[]
+  ResuPalet               ResuPalet[]
+}
+
+model PaletCaixas {
+  IdPaletCaixas          Int       @id(map: "PK_PaletCaixas") @default(autoincrement())
+  Fkpalet                Int?
+  PalCai_Codigo          String?   @unique(map: "IX_PaletCaixas") @db.VarChar(15)
+  PalCai_peso            Decimal?  @db.Decimal(10, 2)
+  PalCai_qtd             Decimal?  @db.Decimal(18, 2)
+  PalCai_data            DateTime  @db.DateTime
+  Fkromaneio             Int?
+  Fkembalador            Int?
+  Fkcaixa                Int?
+  Fkmarcacaixa           Int?
+  fktamanho              Int?
+  palcai_dataPaletizacao DateTime? @db.DateTime
+  PalCai_valornivel      Decimal?  @db.Decimal(18, 3)
+  fknivel                Int?
+  Palet                  Palet?    @relation(fields: [Fkpalet], references: [idPalet], onDelete: Cascade, onUpdate: NoAction, map: "FK_PaletCaixas_Palet")
+}
+
+model Parcelas {
+  idParcelas     Int      @id(map: "PK_Parcelas") @default(autoincrement())
+  Par_Data       DateTime @db.DateTime
+  Par_Valor      Decimal  @db.Decimal(18, 4)
+  par_confirmado Int?
+  FkPConta1      Int?
+  FkPConta2      Int?
+  FkPConta3      Int?
+  FkPConta4      Int?
+  Fktipocobranca Int
+  FkEntrada      Int
+  FkCCusto       Int?
+  Entrada        Entrada  @relation(fields: [FkEntrada], references: [idEntrada], onDelete: Cascade, onUpdate: NoAction, map: "FK_Parcelas_Entrada")
+}
+
+model PConta {
+  IdPConta          Int                 @id(map: "PK_PConta_1")
+  Pco_NumeConta     String?             @db.VarChar(15)
+  Pco_Titulo        String?             @db.VarChar(50)
+  Pco_Debitar       Int?
+  Pco_Creditar      Int?
+  Pco_StatusConta   Int?
+  Pco_Exportacao    String?             @db.VarChar(30)
+  Pco_NomeReduzido  String?             @db.VarChar(30)
+  Digitacao         String?             @db.VarChar(50)
+  DataDigitacao     DateTime?           @db.DateTime
+  Alteracao         String?             @db.VarChar(50)
+  dataAlteracao     DateTime?           @db.DateTime
+  teste             String?             @db.VarChar(15)
+  ClaFiscal         ClaFiscal[]
+  FormCustoIndireto FormCustoIndireto[]
+  OpeAux            OpeAux[]
+  PConta            PConta              @relation("PContaToPConta", fields: [IdPConta], references: [IdPConta], onUpdate: NoAction, map: "FK_PConta_PConta")
+  other_PConta      PConta?             @relation("PContaToPConta")
+}
+
+model PedCompra {
+  idPedCompra         Int            @id(map: "PK_PedCompra") @default(autoincrement())
+  PeC_Antecipado      Int?
+  PeC_ConPagto        String?        @db.VarChar(20)
+  PeC_Contato         String?        @db.VarChar(30)
+  Pec_DataPedido      DateTime?      @db.DateTime
+  PeC_DataEntrada     DateTime?      @db.DateTime
+  PeC_Transportadora  String?        @db.VarChar(30)
+  PeC_Telefone        String?        @db.VarChar(15)
+  PeC_Obs             String?        @db.VarChar(80)
+  PeC_PosVenda        String?        @db.Text
+  FkFilial            Int
+  FkEmpresa           Int
+  Digitacao           String?        @db.VarChar(40)
+  DataDigitacao       DateTime?      @db.DateTime
+  Alteracao           String?        @db.VarChar(40)
+  DataAlteracao       DateTime?      @db.DateTime
+  Pec_dataAutorizacao DateTime?      @db.DateTime
+  Pec_Usuario         String?        @db.VarChar(30)
+  Entrada             Entrada[]
+  PedCompraAux        PedCompraAux[]
+}
+
+model PedCompraAux {
+  idPedCompraAux   Int       @id(map: "PK_PedCompraAux") @default(autoincrement())
+  PCaux_Qtd        Decimal   @db.Decimal(18, 4)
+  PCaux_PCompra    Decimal   @db.Decimal(18, 4)
+  PCaux_Referencia String?   @db.VarChar(30)
+  PCaux_Requisao   String?   @db.VarChar(25)
+  FkPedCompra      Int
+  FkProdutoAlm     Int
+  PedCompra        PedCompra @relation(fields: [FkPedCompra], references: [idPedCompra], onDelete: Cascade, onUpdate: NoAction, map: "FK_PedCompraAux_PedCompra")
+}
+
+model PlaNC {
+  idPlanc       Int     @id(map: "PK_Planc") @default(autoincrement())
+  Pnc_Alias     String? @db.VarChar(50)
+  Pnc_Cabecalho String? @db.VarChar(50)
+  Pnc_SubTitulo String? @db.VarChar(50)
+  Pnc_NomeRel   String? @db.VarChar(25)
+}
+
+model PList {
+  idPList           Int        @id(map: "PK_PList") @default(autoincrement())
+  Pli_Numero        String?    @db.VarChar(7)
+  Pli_TipoEmbarque  Int?
+  Pli_DtProgramacao DateTime?  @db.DateTime
+  Pli_DtEmbarque    DateTime?  @db.DateTime
+  pli_hora          String?    @db.VarChar(10)
+  Pli_DtChegada     DateTime?  @db.DateTime
+  Pli_Bill          String?    @db.VarChar(40)
+  Pli_Invoice       String?    @db.VarChar(7)
+  pli_codReserva    String?    @db.VarChar(50)
+  pli_voo           String?    @db.VarChar(30)
+  pli_container     String?    @db.VarChar(20)
+  Fkempresa         Int
+  fkorigem          Int?
+  fkdestino         Int?
+  Fkcia             Int?
+  Digitacao         String?    @db.VarChar(30)
+  DataDigitacao     DateTime?  @db.DateTime
+  Alteracao         String?    @db.VarChar(40)
+  DataAlteracao     DateTime?  @db.DateTime
+  PListAux          PListAux[]
+}
+
+model PListAux {
+  idPListAux      Int     @id(map: "PK_PListAux") @default(autoincrement())
+  FkPlist         Int
+  FkPalet         Int
+  pla_temperatura String? @db.Char(5)
+  PList           PList   @relation(fields: [FkPlist], references: [idPList], onDelete: Cascade, onUpdate: NoAction, map: "FK_Pla_Pli")
+  Palet           Palet   @relation(fields: [FkPalet], references: [idPalet], onUpdate: NoAction, map: "FK_PListAux_Palet")
+}
+
+model ProdutoAlmAux {
+  idProdAlmAux         Int       @id(map: "PK_ProdutoAlmAux") @default(autoincrement())
+  PalAux_EstMinimo     Decimal   @db.Decimal(18, 4)
+  PalAux_EstMaximo     Decimal   @db.Decimal(18, 4)
+  PalAux_ValorCompra   Decimal?  @db.Decimal(18, 4)
+  PalAux_DataCompra    DateTime? @db.DateTime
+  PalAux_Saldo         Decimal?  @db.Decimal(18, 4)
+  fkProdutoAlm         Int
+  PalAux_PCusto        Decimal?  @db.Decimal(18, 4)
+  PalAux_ValorCompraUS Decimal?  @db.Decimal(18, 2)
+  PalAux_PCustoUS      Decimal?  @db.Decimal(18, 2)
+}
+
+model Pul_cadPulverizador {
+  IdCadPulverizador Int       @id(map: "PK_Pul_cadPulverizador") @default(autoincrement())
+  cadpul_descricao  String?   @db.VarChar(60)
+  cadpul_capacidade Int?
+  cadpul_ativo      Int?
+  datadigitacao     DateTime? @db.DateTime
+  digitacao         String?   @db.VarChar(50)
+  alteracao         String?   @db.VarChar(50)
+  DataAlteracao     DateTime? @db.DateTime
+}
+
+model Pul_CadTalhao {
+  Idcadtalhao              Int                        @id(map: "PK_Pul_CadTalhao") @default(autoincrement())
+  CadTal_Nome              String?                    @db.VarChar(30)
+  CadTal_area              Decimal?                   @db.Decimal(18, 2)
+  CadTal_qtdPes            Decimal?                   @db.Decimal(18, 0)
+  CadTal_ativo             Int?
+  fkprodutor               Int?
+  fkproduto                Int?
+  dataDigitacao            DateTime?                  @db.DateTime
+  digitacao                String?                    @db.VarChar(40)
+  Alteracao                String?                    @db.VarChar(40)
+  DataAlteracao            DateTime?                  @db.DateTime
+  Pul_controlePulverizacao Pul_controlePulverizacao[]
+}
+
+model Pul_controlePulverizacao {
+  IdcontrolePulverizacao      Int                           @id(map: "PK_Pul_controlePulverizacao") @default(autoincrement())
+  fkprodutor                  Int?
+  fktalhao                    Int?
+  Digitador                   String?                       @db.VarChar(40)
+  Datadigitacao               DateTime?                     @db.DateTime
+  Alteracao                   String?                       @db.VarChar(40)
+  DataAlteracao               DateTime?                     @db.DateTime
+  Pul_CadTalhao               Pul_CadTalhao?                @relation(fields: [fktalhao], references: [Idcadtalhao], onDelete: NoAction, onUpdate: NoAction, map: "FK_Pul_controlePulverizacao_Pul_CadTalhao")
+  pul_controlePulverizacaoAux pul_controlePulverizacaoAux[]
+}
+
+model pul_controlePulverizacaoAux {
+  IdcontrolePulverizacaoAux Int                       @id(map: "PK_pul_controlePulverizacaoAux") @default(autoincrement())
+  fkpulverizador            Int?
+  fkdefensivo               Int?
+  PulAux_data               DateTime?                 @db.DateTime
+  pulaux_und                String?                   @db.VarChar(3)
+  pulaux_qtd                Decimal?                  @db.Decimal(18, 2)
+  pulaux_qtdTanques         Decimal?                  @db.Decimal(18, 2)
+  pulaux_areaPulverizada    Decimal?                  @db.Decimal(18, 2)
+  fkcontrolepulverizacao    Int?
+  Pul_controlePulverizacao  Pul_controlePulverizacao? @relation(fields: [fkcontrolepulverizacao], references: [IdcontrolePulverizacao], onDelete: Cascade, onUpdate: NoAction, map: "FK_pul_controlePulverizacaoAux_Pul_controlePulverizacao")
+}
+
+model Receber {
+  IdReceber                 Int                  @id(map: "PK_Receber") @default(autoincrement())
+  Rec_Fatura                String?              @db.VarChar(15)
+  Rec_Parcela               String?              @db.VarChar(5)
+  Rec_Descricao             String?              @db.VarChar(80)
+  Rec_Confirmado            Boolean?
+  Rec_DataEmissao           DateTime?            @db.DateTime
+  Rec_DataCompetencia       DateTime?            @db.DateTime
+  Rec_DataVencimento        DateTime?            @db.DateTime
+  Rec_Valor                 Decimal?             @db.Decimal(18, 2)
+  Rec_Valor_US              Decimal?             @db.Decimal(18, 2)
+  Rec_Documento             String?              @db.VarChar(25)
+  Rec_Obs                   String?              @db.VarChar(60)
+  Rec_ValorAcrescimo        Decimal?             @db.Decimal(18, 2)
+  Rec_ValorDesconto         Decimal?             @db.Decimal(18, 2)
+  Rec_ValorPagto            Decimal?             @db.Decimal(18, 2)
+  Rec_ValorPagto_US         Decimal?             @db.Decimal(18, 2)
+  Rec_DataPagto             DateTime?            @db.DateTime
+  Rec_NumCheque             String?              @db.VarChar(10)
+  Rec_Boleto                Boolean?
+  rec_comissao              Decimal?             @db.Decimal(18, 2)
+  rec_Bancoboleto           String?              @db.VarChar(50)
+  rec_DigitadorBoleto       String?              @db.VarChar(30)
+  rec_DataBoleto            DateTime?            @db.DateTime
+  rec_valor_EU              Decimal?             @db.Decimal(18, 2)
+  rec_valorPagto_EU         Decimal?             @db.Decimal(18, 2)
+  rec_nfe                   String?              @db.VarChar(15)
+  rec_idOriginal            Int?
+  rec_nossoNumero           String?              @db.VarChar(17)
+  rec_mora                  Decimal?             @db.Decimal(10, 2)
+  rec_agenciaCobranca       String?              @db.VarChar(7)
+  rec_DigitoagenciaCobranca String?              @db.VarChar(2)
+  rec_ContaCobranca         String?              @db.VarChar(12)
+  rec_DigitoContaCobranca   String?              @db.VarChar(2)
+  rec_carteiraCobranca      String?              @db.VarChar(3)
+  rec_codCedente            String?              @db.VarChar(20)
+  fkvendedor                Int?
+  fkbancoCobranca           Int?
+  FkTipoCobranca            Int?
+  FkBanco                   Int?
+  FkEmpresa                 Int?
+  Digitacao                 String?              @db.VarChar(30)
+  DataDigitacao             DateTime?            @db.DateTime
+  Alteracao                 String?              @db.VarChar(30)
+  DataAlteracao             DateTime?            @db.DateTime
+  rec_arquivoRemessa        String?              @db.VarChar(50)
+  ocorrencias_Receber       ocorrencias_Receber?
+}
+
+model ResuPalet {
+  idResuPalet        Int      @id(map: "PK_ResuPalet") @default(autoincrement())
+  RPa_TpTratamento   Boolean
+  FkPalet            Int
+  FkProduto          Int
+  FkTamanho          Int
+  FkMarcaCaixa       Int
+  FkCaixa            Int
+  fkromaneio         Int?
+  rpa_qtdfrutoscaixa Int?
+  rpa_peso           Decimal? @db.Decimal(12, 2)
+  rpa_Caixas         Decimal? @db.Decimal(12, 2)
+  rpa_Tipoestoque    Int?
+  rpa_maturacao      Int?
+  rpa_codinterno     String?  @db.VarChar(12)
+  rpa_faixaPreco     Int?
+  Palet              Palet    @relation(fields: [FkPalet], references: [idPalet], onDelete: Cascade, onUpdate: NoAction, map: "FK_ResuPalet_Palet")
+}
+
+model Rh_cargo {
+  Idcargo          Int                @id(clustered: false, map: "PK_Rh_cargo") @unique(map: "IX_Rh_cargo", clustered: true) @default(autoincrement())
+  Car_descricao    String?            @db.Char(50)
+  RH_colaboradores RH_colaboradores[]
+}
+
+model RH_colaboradores {
+  idcolaborador      Int              @id(map: "PK_RH_colaboradores") @unique(map: "IX_RH_colaboradores") @default(autoincrement())
+  col_codinterno     String?          @db.VarChar(15)
+  Col_Nome           String?          @db.VarChar(60)
+  col_apelido        String?          @db.VarChar(30)
+  col_contratante    Int?
+  col_dtnascimento   DateTime?        @db.DateTime
+  col_sexo           Int?
+  col_telefone       String?          @db.VarChar(50)
+  col_email          String?          @db.VarChar(50)
+  col_pai            String?          @db.VarChar(60)
+  col_mae            String?          @db.VarChar(60)
+  col_ctps           String?          @db.VarChar(30)
+  col_cpf            String?          @db.Char(14)
+  col_identidade     String?          @db.VarChar(25)
+  Col_habilitacao    String?          @db.VarChar(20)
+  col_passaporte     String?          @db.VarChar(30)
+  col_reservista     String?          @db.VarChar(50)
+  col_planosaude     String?          @db.VarChar(30)
+  col_pis            String?          @db.VarChar(20)
+  col_titulo         String?          @db.VarChar(30)
+  col_estadocivil    String?          @db.Char(40)
+  col_banco          String?          @db.VarChar(20)
+  col_agencia        String?          @db.VarChar(30)
+  col_rua            String?          @db.VarChar(50)
+  col_bairro         String?          @db.VarChar(40)
+  col_cep            String?          @db.Char(9)
+  col_escolaridade   String?          @db.Char(30)
+  col_curso          String?          @db.VarChar(40)
+  col_curso1         String?          @db.VarChar(40)
+  col_curso2         String?          @db.VarChar(40)
+  col_curso3         String?          @db.VarChar(40)
+  col_dtregistro     DateTime?        @db.DateTime
+  col_dtcontratacao  DateTime?        @db.DateTime
+  col_dtdesligamento DateTime?        @db.DateTime
+  col_motivo         String?          @db.VarChar(60)
+  col_desempenho     String?          @db.VarChar(30)
+  col_exfuncionario  Int?
+  col_status         Int?
+  col_foto           String?          @db.VarChar(130)
+  col_digitador      String?          @db.Char(40)
+  col_dtdigitacao    DateTime?        @db.DateTime
+  fktipo             Int?
+  fkSetor            Int?
+  Fkcargo            Int?
+  FkNivel            Int?
+  fkcidade           Int?
+  col_salarioBase    Decimal?         @db.Decimal(9, 2)
+  fkccusto           Int?
+  Rh_cargo           Rh_cargo?        @relation(fields: [Fkcargo], references: [Idcargo], onDelete: NoAction, onUpdate: NoAction, map: "FK_RH_colaboradores_Rh_cargo")
+  rh_nivel           rh_nivel?        @relation(fields: [FkNivel], references: [IdNivel], onDelete: NoAction, onUpdate: NoAction, map: "FK_RH_colaboradores_rh_nivel")
+  rh_curriculos      rh_curriculos[]
+  Rh_dependentes     Rh_dependentes[]
+  rh_documentos      rh_documentos[]
+}
+
+model rh_curriculos {
+  IDrhcurriculo    Int               @id(map: "PK_rh_curriculos") @default(autoincrement())
+  curriculo        String?           @db.VarChar(8000)
+  fkcolaborador    Int?
+  RH_colaboradores RH_colaboradores? @relation(fields: [fkcolaborador], references: [idcolaborador], onDelete: Cascade, onUpdate: NoAction, map: "FK_rh_curriculos_RH_colaboradores")
+}
+
+model Rh_dependentes {
+  IDdependentes    Int              @id(map: "PK_Rh_dependentes") @unique(map: "IX_Rh_dependentes") @default(autoincrement())
+  Dep_nome         String?          @db.VarChar(60)
+  dep_dtnascimento DateTime?        @db.DateTime
+  dep_sexo         Int?
+  dep_escolaridade String?          @db.VarChar(30)
+  dep_observacao   String?          @db.VarChar(50)
+  dep_parentesco   String?          @db.VarChar(50)
+  FkColaborador    Int
+  RH_colaboradores RH_colaboradores @relation(fields: [FkColaborador], references: [idcolaborador], onUpdate: NoAction, map: "FK_Rh_dependentes_RH_colaboradores")
+}
+
+model rh_documentos {
+  Idrh_documentos  Int              @id(map: "PK_rh_documentos") @default(autoincrement())
+  doc_descricao    String?          @db.VarChar(50)
+  doc_tipo         String?          @db.VarChar(20)
+  doc_dtentrega    DateTime?        @db.DateTime
+  doc_observacao   String?          @db.VarChar(60)
+  fkcolaborador    Int
+  RH_colaboradores RH_colaboradores @relation(fields: [fkcolaborador], references: [idcolaborador], onUpdate: NoAction, map: "FK_rh_documentos_RH_colaboradores")
+}
+
+model rh_lancamento {
+  Idlancamento      Int          @id(map: "PK_rh_lancamento") @default(autoincrement())
+  lan_tpfolha       Int?
+  lan_Mesreferencia String?      @db.VarChar(50)
+  lan_vencimento    DateTime?    @db.DateTime
+  lan_Descricao     String?      @db.VarChar(40)
+  lan_obs           String?      @db.VarChar(50)
+  lan_fechado       Int?
+  fkdebitoL         Int?
+  FKcreditoL        Int?
+  fkdebitoP         Int?
+  fkCreditoP        Int?
+  fkccusto          Int?
+  lan_digitador     String?      @db.VarChar(40)
+  lan_dtdigitacao   DateTime?    @db.DateTime
+  lan_total         Decimal?     @db.Decimal(18, 2)
+  lan_totalPago     Decimal?     @db.Decimal(18, 2)
+  lan_competencia   DateTime?    @db.DateTime
+  lan_emissao       DateTime?    @db.DateTime
+  lan_gerado        Int?
+  lan_confirmado    Int?
+  rh_lancAux        rh_lancAux[]
+}
+
+model rh_lancAux {
+  IdlancaAux         Int            @id(map: "PK_rh_lancAux") @default(autoincrement())
+  lanAux_valor       Decimal?       @db.Decimal(18, 2)
+  lanAux_cheque      String?        @db.VarChar(15)
+  lanAux_compensado  Int?
+  fklancamento       Int?
+  fkcolaborador      Int?
+  fkbanco            Int?
+  lanAux_dtemissaoch DateTime?      @db.SmallDateTime
+  lanaux_usuario     String?        @db.VarChar(30)
+  lanaux_obs         String?        @db.VarChar(60)
+  lanAux_contratante String?        @db.VarChar(30)
+  rh_lancamento      rh_lancamento? @relation(fields: [fklancamento], references: [Idlancamento], onDelete: Cascade, onUpdate: NoAction, map: "FK_rh_lancAux_rh_lancamento")
+}
+
+model rh_nivel {
+  IdNivel          Int                @id(map: "PK_rh_nivel") @default(autoincrement())
+  niv_descricao    String?            @db.Char(50)
+  RH_colaboradores RH_colaboradores[]
+}
+
+model RH_tpcolaborador {
+  Idtipo        Int     @id(map: "PK_RH_tpcolaborador") @default(autoincrement())
+  Tip_descricao String? @db.Char(50)
+}
+
+model Romaneio {
+  idRomaneio             Int                   @id(map: "PK_Romaneio") @default(autoincrement())
+  Rom_status             Int?                  @default(0, map: "DF_Romaneio_Rom_status")
+  Rom_DtColheita         DateTime              @db.DateTime
+  Rom_DtChegada          DateTime              @db.DateTime
+  Rom_Lote               String?               @db.VarChar(15)
+  Rom_TipoColheita       Int
+  Rom_TipoPesagem        Int?
+  Rom_Romaneio           String?               @db.VarChar(5)
+  Rom_QtdCaixa           Decimal               @db.Decimal(18, 2)
+  Rom_QtdKilos           Decimal               @db.Decimal(18, 2)
+  Rom_DtSelecao          DateTime?             @db.DateTime
+  Rom_DtInicioSelecao    DateTime?             @db.DateTime
+  Rom_DtFImSelecao       DateTime?             @db.DateTime
+  Rom_TempoParadas       Int?
+  Rom_PesoCaixa          Decimal?              @db.Decimal(18, 2)
+  Rom_TpTratamento       Boolean?
+  Rom_TMI                Decimal?              @db.Decimal(18, 2)
+  Rom_TMII               Decimal?              @db.Decimal(18, 2)
+  Rom_TMIII              Decimal?              @db.Decimal(18, 2)
+  Rom_QtdPerda           Decimal?              @db.Decimal(18, 2)
+  Rom_QtdExportacao      Decimal?              @db.Decimal(18, 2)
+  Rom_QtdExportacaoII    Decimal?              @db.Decimal(18, 2)
+  Rom_QtdExportacaoIII   Decimal?              @db.Decimal(18, 2)
+  Rom_NFechamento        String?               @db.VarChar(15)
+  Rom_VlrTMI             Decimal?              @db.Decimal(18, 2)
+  Rom_VlrTMII            Decimal?              @db.Decimal(18, 2)
+  Rom_VlrTMIII           Decimal?              @db.Decimal(18, 2)
+  rom_TmIV               Decimal?              @db.Decimal(18, 2)
+  Rom_VlrTMIV            Decimal?              @db.Decimal(18, 2)
+  Rom_VlrPerda           Decimal?              @db.Decimal(18, 2)
+  Rom_VlrExportacao      Decimal?              @db.Decimal(18, 2)
+  Rom_VlrExportacaoII    Decimal?              @db.Decimal(18, 2)
+  Rom_VlrExportacaoIII   Decimal?              @db.Decimal(18, 2)
+  FkProduto              Int
+  FkEmpresa              Int
+  Rom_Digitador          String?               @db.VarChar(20)
+  Rom_DtDigitacao        DateTime?             @db.DateTime
+  ROM_digitadorselecao   String?               @db.VarChar(30)
+  ROM_dtdigitacaoselecao DateTime?             @db.DateTime
+  ROM_TALHAO             String?               @db.Char(3)
+  Rom_Turno              String?               @db.VarChar(2)
+  Rom_FreteUrgente       Int?
+  fkCaminhao             Int?
+  rom_TurnoMI            String?               @db.VarChar(2)
+  rom_kmAnterior         Int?
+  rom_kmAtual            Int?
+  rom_Ignorakm           Int?
+  rom_globalGap          Int?
+  rom_dtalteracao        DateTime?             @db.DateTime
+  rom_alteracao          String?               @db.VarChar(40)
+  AcCamara               AcCamara[]
+  CamaraGeral            CamaraGeral[]
+  img_lote               img_lote[]
+  MI_Lotes               MI_Lotes[]
+  ocorrencias_romaneio   ocorrencias_romaneio?
+  RomaneioAux            RomaneioAux[]
+  RomaneioCQ             RomaneioCQ[]
+  RomaneioParadas        RomaneioParadas[]
+}
+
+model RomaneioAux {
+  IdromaneioAux    Int       @id(map: "PK_RomaneioAUx") @default(autoincrement())
+  RomAux_qtdCaixa  Decimal?  @db.Decimal(18, 2)
+  RomAux_qtdKilo   Decimal?  @db.Decimal(18, 2)
+  fkromaneio       Int?
+  RomAux_Taracaixa Decimal?  @db.Decimal(18, 2)
+  Romaneio         Romaneio? @relation(fields: [fkromaneio], references: [idRomaneio], onDelete: Cascade, onUpdate: NoAction, map: "FK_RomaneioAUx_Romaneio")
+}
+
+model RomaneioCQ {
+  IdRomaneioCQ                                Int       @id(map: "PK_RomaneioCQ") @default(autoincrement())
+  RomaneioCQ_CodAvaliacao                     Int?
+  RomaneioCQ_Avaliacao                        String?   @db.VarChar(40)
+  RomaneioCQ_maturacao                        Int?
+  RomaneioCq_Classificacao                    Int?
+  RomaneioCq_CoordenadaInicial                String?   @db.VarChar(15)
+  RomaneioCq_CoordenadaFinal                  String?   @db.VarChar(15)
+  RomaneioCq_CoordenadaInicialDoenca          String?   @db.VarChar(15)
+  RomaneioCq_CoordenadaFinalDoenca            String?   @db.VarChar(15)
+  RomaneioCq_CoordenadaPontoCentral_col       Decimal?  @db.Decimal(18, 9)
+  RomaneioCq_CoordenadaPontoCentral_lin       Decimal?  @db.Decimal(18, 9)
+  RomaneioCq_Altura                           Decimal?  @db.Decimal(18, 9)
+  RomaneioCq_Largura                          Decimal?  @db.Decimal(18, 9)
+  RomaneioCq_CoordenadaPontoCentralDoenca_col Decimal?  @db.Decimal(18, 9)
+  RomaneioCq_CoordenadaPontoCentralDoenca_lin Decimal?  @db.Decimal(18, 9)
+  RomaneioCq_AlturaDoenca                     Decimal?  @db.Decimal(18, 9)
+  RomaneioCq_LarguraDoenca                    Decimal?  @db.Decimal(18, 9)
+  RomaneioCQ_DataInclusao                     DateTime? @db.DateTime
+  RomaneioCQ_Imagem                           Bytes?
+  RomaneioCQ_tipoAvaliacao                    Int?
+  Fkromaneio                                  Int
+  Romaneio                                    Romaneio  @relation(fields: [Fkromaneio], references: [idRomaneio], onDelete: Cascade, onUpdate: NoAction, map: "FK_RomaneioCQ_Romaneio")
+}
+
+model RomaneioParadas {
+  IdRomaneioParadas Int       @id(map: "PK_RamaneioParadas") @default(autoincrement())
+  RomPar_inicio     DateTime? @db.DateTime
+  RomPar_fim        DateTime? @db.DateTime
+  RomPar_duracao    Int?
+  Fkromaneio        Int?
+  Fkmotivo          Int?
+  Romaneio          Romaneio? @relation(fields: [Fkromaneio], references: [idRomaneio], onDelete: NoAction, onUpdate: NoAction, map: "FK_RomaneioParadas_Romaneio")
+}
+
+model SaiAux {
+  idSaiAux     Int      @id(map: "PK_SaiAux") @default(autoincrement())
+  SaA_Qtd      Decimal  @db.Decimal(18, 4)
+  SaA_Uso      String?  @db.VarChar(40)
+  FkSaida      Int
+  FkProdutoAlm Int
+  SaA_PCusto   Decimal? @db.Decimal(18, 4)
+  SaA_Unidade  String?  @db.VarChar(3)
+  Saida        Saida    @relation(fields: [FkSaida], references: [idSaida], onUpdate: NoAction, map: "FK_SaiAux_Saida")
+}
+
+model Saida {
+  idSaida             Int       @id(map: "PK_Saida")
+  Sai_Responsavel     String?   @db.VarChar(25)
+  Sai_DataSaida       DateTime  @db.DateTime
+  Sai_Requerente      String?   @db.VarChar(30)
+  Sai_Obs             String?   @db.VarChar(80)
+  sai_valor           Decimal?  @db.Decimal(18, 2)
+  FkPContaD           Int
+  FkPContaC           Int
+  FkSetor             Int
+  Fkccusto            Int?
+  Digitador           String?   @db.VarChar(20)
+  DataDigitacao       DateTime? @db.DateTime
+  sai_BaixaAutomatica Int?
+  SaiAux              SaiAux[]
+}
+
+model SelecaoAux {
+  IdselecaoAux     Int      @id(map: "PK_SelecaoAux") @default(autoincrement())
+  selaux_qtdcaixa  Decimal? @db.Decimal(18, 2)
+  SelAux_qtdKilo   Decimal? @db.Decimal(18, 2)
+  SelAux_taraCaixa Decimal? @db.Decimal(18, 2)
+  fkromaneio       Int?
+}
+
+model Setor {
+  idSetor         Int       @id(map: "PK_Setor") @default(autoincrement())
+  Set_Descricao   String?   @db.VarChar(50)
+  Set_Responsavel String?   @db.VarChar(40)
+  Digitacao       String?   @db.VarChar(50)
+  DataDigitacao   DateTime? @db.DateTime
+  Alteracao       String?   @db.VarChar(40)
+  DataAlteracao   DateTime? @db.DateTime
+}
+
+model Simula_tmp {
+  Idsimulacao       Decimal  @id(map: "PK_Simula_tem") @db.Decimal(18, 0)
+  Fkcusto           Int?
+  Fkproduto         Int?
+  fktamanho         Int?
+  sim_nomeproduto   String?  @db.VarChar(50)
+  sim_nomeTamanho   String?  @db.VarChar(50)
+  sim_nomecusto     String?  @db.VarChar(30)
+  sim_pesocaixa     Decimal? @db.Decimal(18, 2)
+  sim_qtdvenda      Decimal? @db.Decimal(18, 1)
+  sim_valorvenda    Decimal? @db.Decimal(18, 3)
+  sim_totalItem     Decimal? @db.Decimal(18, 3)
+  sim_valorfruto    Decimal? @db.Decimal(18, 3)
+  sim_freteinterno  Decimal? @db.Decimal(18, 3)
+  sim_custoDireto   Decimal? @db.Decimal(18, 3)
+  sim_custoindireto Decimal? @db.Decimal(18, 3)
+  sim_custoTotalUnt Decimal? @db.Decimal(18, 3)
+  sim_custoTotal    Decimal? @db.Decimal(18, 3)
+  sim_frete         Decimal? @db.Decimal(18, 3)
+  sim_despesavenda  Decimal? @db.Decimal(18, 3)
+  sim_lucroUnitario Decimal? @db.Decimal(18, 3)
+  sim_extrakg       Decimal? @db.Decimal(18, 2)
+}
+
+/// The underlying table does not contain a valid unique identifier and can therefore currently not be handled by Prisma Client.
+model Tipocarroceria {
+  tipocarroceria String? @db.NChar(80)
+
+  @@ignore
+}
+
+/// The underlying table does not contain a valid unique identifier and can therefore currently not be handled by Prisma Client.
+model TipoRodado {
+  tiporodado String? @db.NChar(80)
+
+  @@ignore
+}
+
+model TranspAux {
+  idTranspAux                  Int             @id(map: "PK_TranspAux") @default(autoincrement())
+  TraAux_Carro                 String?         @db.NVarChar(100)
+  TraAux_kilometragem          Int?
+  TraAux_Placa                 String?         @db.NVarChar(20)
+  TraAux_UFPlaca               String?         @db.NVarChar(4)
+  fkTransportadora             Int?
+  TraAux_capacidade            Decimal?        @db.Decimal(18, 1)
+  TraAux_tara                  Decimal?        @db.Decimal(18, 1)
+  TraAux_RNTRC                 String?         @db.VarChar(8)
+  TraAux_CIOT                  String?         @db.VarChar(12)
+  TraAux_TipoRodado            String?         @db.VarChar(40)
+  TraAux_Tipocarroceria        String?         @db.VarChar(40)
+  TraAux_PlacaReboque          String?         @db.NChar(16)
+  TraAux_UFPlacaReboque        String?         @db.NVarChar(4)
+  TraAux_RNTRCReboque          String?         @db.VarChar(8)
+  TraAux_taraReboque           Decimal?        @db.Decimal(18, 1)
+  TraAux_capacidadeReboque     Decimal?        @db.Decimal(18, 1)
+  TraAux_TipocarroceriaReboque String?         @db.VarChar(40)
+  Transportadora               Transportadora? @relation(fields: [fkTransportadora], references: [IDtransportadora], onDelete: Cascade, onUpdate: NoAction, map: "FK_TranspAux_Transportadora")
+}
+
+model Transportadora {
+  IDtransportadora Int         @id(map: "PK_Transportadora") @default(autoincrement())
+  Tra_Nome         String?     @db.VarChar(50)
+  Tra_Pessoa       Int?
+  Tra_CPFCNPJ      String?     @db.VarChar(50)
+  Tra_InscEstadual String?     @db.VarChar(50)
+  Tra_Contato      String?     @db.VarChar(50)
+  Tra_Rua          String?     @db.VarChar(50)
+  Tra_Bairro       String?     @db.VarChar(50)
+  Tra_CEP          String?     @db.VarChar(50)
+  Tra_Telefone     String?     @db.VarChar(50)
+  Tra_Fax          String?     @db.VarChar(50)
+  fkCidade         Int?
+  TranspAux        TranspAux[]
+}
+
+model UCS_APP_INFO {
+  APP_ID                Int     @id(map: "PK__UCS_APP___F00E58048AAE6A13")
+  APP_KEY               String? @db.VarChar(20)
+  APP_GUID              String? @db.VarChar(38)
+  TIME_OUT              Int?
+  MAX_BAD_LOGINS        Int?
+  MAX_DAYS_INNATIVE     Int?
+  DISABLE_USER          String? @db.VarChar(1)
+  MAX_PWD_HISTORY       Int?
+  ALLOW_MULTIPLE_LOGINS String? @db.VarChar(1)
+  DEFAULT_PROF          Int?
+}
+
+model UCS_AUDIT {
+  APP_ID           Int
+  USER_ID          Int
+  FORM_ID          Int
+  COMP_ID          Int
+  DATE_UTIL        Float
+  COMPUTER_NAME    String? @db.VarChar(30)
+  ADDITIONAL_INFO1 String? @db.VarChar(1000)
+  ADDITIONAL_INFO2 String? @db.VarChar(1000)
+
+  @@id([APP_ID, USER_ID, FORM_ID, COMP_ID, DATE_UTIL], map: "PK__UCS_AUDI__7562798A6E1DB073")
+}
+
+model UCS_COMPS {
+  APP_ID       Int
+  FORM_ID      Int
+  COMP_NAME    String  @db.VarChar(100)
+  COMP_ID      Int?
+  COMP_CAPTION String? @db.VarChar(100)
+  PARENT_ID    Int
+  AUDIT_MODE   String? @db.VarChar(1)
+
+  @@id([APP_ID, FORM_ID, COMP_NAME], map: "PK__UCS_COMP__0EFBE69666010E09")
+}
+
+model UCS_FORMINFO {
+  PROF_ID     Int
+  APP_ID      Int
+  FORM_ID     Int
+  LAST_UPDATE Float?
+
+  @@id([PROF_ID, APP_ID, FORM_ID], map: "PK__UCS_FORM__90B4C188C200BB2D")
+}
+
+model UCS_FORMS {
+  APP_ID       Int
+  FORM_NAME    String  @db.VarChar(100)
+  FORM_ID      Int?
+  FORM_CAPTION String? @db.VarChar(100)
+
+  @@id([APP_ID, FORM_NAME], map: "PK__UCS_FORM__BB124D8A6DA22FD1")
+}
+
+model UCS_HISTORY {
+  USER_ID     Int
+  USER_PWD    String @db.VarChar(60)
+  CHANGE_DATE Float?
+
+  @@id([USER_ID, USER_PWD], map: "PK__UCS_HIST__E7A8C34F7172C0B5")
+}
+
+model UCS_LOGIN_TRACE {
+  APP_ID           Int
+  USER_ID          Int
+  LOGIN_DATE_TIME  Float   @db.Real
+  LOGOUT_DATE_TIME Float   @db.Real
+  COMPUTER_NAME    String? @db.VarChar(30)
+
+  @@id([APP_ID, USER_ID, LOGIN_DATE_TIME, LOGOUT_DATE_TIME], map: "PK__UCS_LOGI__115EE0CFA131933D")
+}
+
+/// The underlying table does not contain a valid unique identifier and can therefore currently not be handled by Prisma Client.
+model UCS_PACCESS {
+  APP_ID    Int
+  FORM_ID   Int
+  COMP_ID   Int
+  PROF_ID   Int
+  SEC_LEVEL String? @db.VarChar(1)
+
+  @@ignore
+}
+
+/// The underlying table does not contain a valid unique identifier and can therefore currently not be handled by Prisma Client.
+model UCS_PACCESS_old {
+  APP_ID    Int
+  FORM_ID   Int
+  COMP_ID   Int
+  PROF_ID   Int
+  SEC_LEVEL String? @db.VarChar(1)
+
+  @@ignore
+}
+
+model UCS_PROFILES {
+  PROF_DESCRIPTION    String  @id(map: "PK__UCS_PROF__2B3F33B87CE47361") @db.VarChar(30)
+  PROF_ID             Int?
+  INTERVAL_CHANGE_PWD Int?
+  MUST_CHANGE_PWD     String? @db.VarChar(1)
+  AUDIT_MODE          String? @db.VarChar(1)
+  PARENT_PROF         Int?
+  PROF_LEVEL          Int?
+}
+
+model UCS_USERINFO {
+  APP_ID          Int
+  USER_ID         Int
+  PROF_ID         Int?
+  EXPIRATION_DATE Float?
+  USER_EXPIRE     String? @db.VarChar(1)
+  USER_ACTIVE     String? @db.VarChar(1)
+  USER_IS_ADMIN   String? @db.VarChar(1)
+  ADDITIONAL_INFO String? @db.VarChar(200)
+
+  @@id([APP_ID, USER_ID], map: "PK__UCS_USER__1F35B6BBF674C7E3")
+}
+
+model UCS_USERS {
+  USER_NAME       String  @id(map: "PK__UCS_USER__E0B75F6E0856260D") @db.VarChar(30)
+  REAL_NAME       String? @db.VarChar(40)
+  USER_PWD        String? @db.VarChar(60)
+  USER_ID         Int?
+  LAST_PWD_CHANGE Float?
+  AUDIT_MODE      String? @db.VarChar(1)
+  GUID            String? @db.VarChar(38)
+  EMAIL           String? @db.VarChar(200)
 }

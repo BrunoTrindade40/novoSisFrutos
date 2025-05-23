@@ -3,8 +3,7 @@ import { config } from "dotenv";
 import express, { Request, Response } from "express";
 import cors from "cors";
 import { repositoryUsersDB } from "./repositories/users/banco-users";
-import router from "./routes"; // Importa o router
-
+import router from "./routes"; 
 config();
 
 const app = express();

@@ -1,16 +1,15 @@
 export interface Produto {
-  id: string;
-  codigo: string;
-  nome: string;
-  descricao: string;
-  preco: number;
-  produtor: string;
-  romaneio: string;
-  talhao: string;
-  estoque: number;
-  embalagem: string;
-  embalador: string;
+  codcaixa: string;
+  emp_razaoSocial: string;
+  endereco: string;
+  pro_descricao: string;
+  tam_descricao: string;
+  cai_descricao: string;
+  palcai_qtd: string;
+  rom_romaneio: string;
+  rom_talhao: string;
+  Cademb_nome: string;
   cidade: string;
-  colheita: string;
-  chegada: string;
+  rom_dtcolheita: string;
+  rom_dtchegada: string;
 }

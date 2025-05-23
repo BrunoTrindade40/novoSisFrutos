@@ -25,22 +25,20 @@ export function ProdutoDetalhes({ produto } : Props) {
         }}
       >
         <Box sx={{ minWidth: 250 }}>
-          <p><strong>ID:</strong> {produto.id}</p>
-          <p><strong>Código:</strong> {produto.codigo}</p>
-          <p><strong>Nome:</strong> {produto.nome}</p>
-          <p><strong>Descrição:</strong> {produto.descricao}</p>
-          <p><strong>Preço:</strong> R$ {produto.preco.toFixed(2)}</p>
-          <p><strong>Produtor:</strong> {produto.produtor}</p>
-          <p><strong>Romaneio:</strong> {produto.romaneio}</p>
+          <p><strong>Código:</strong> {produto.codcaixa}</p>
+          <p><strong>Nome:</strong> {produto.cai_descricao}</p>
+          <p><strong>Descrição:</strong> {produto.pro_descricao}</p>
+          <p><strong>Produtor:</strong> {produto.emp_razaoSocial}</p>
+          <p><strong>Romaneio:</strong> {produto.rom_romaneio}</p>
+          <p><strong>Endereço:</strong> {produto.endereco}</p>
         </Box>
         <Box sx={{ minWidth: 250 }}>
-          <p><strong>Talhão:</strong> {produto.talhao}</p>
-          <p><strong>Estoque:</strong> {produto.estoque}</p>
-          <p><strong>Embalagem:</strong> {produto.embalagem}</p>
-          <p><strong>Embalador:</strong> {produto.embalador}</p>
+          <p><strong>Talhão:</strong> {produto.rom_talhao}</p>
+          <p><strong>Quantidade Pallet:</strong> {produto.palcai_qtd}</p>
+          <p><strong>Embalador:</strong> {produto.Cademb_nome}</p>
           <p><strong>Cidade:</strong> {produto.cidade}</p>
-          <p><strong>Colheita:</strong> {new Date(produto.colheita).toLocaleDateString()}</p>
-          <p><strong>Chegada:</strong> {new Date(produto.chegada).toLocaleDateString()}</p>
+          <p><strong>Data da Colheita:</strong> {new Date(produto.rom_dtcolheita).toLocaleDateString()}</p>
+          <p><strong>Data de Chegada:</strong> {new Date(produto.rom_dtchegada).toLocaleDateString()}</p>
         </Box>
       </Box>
     </>

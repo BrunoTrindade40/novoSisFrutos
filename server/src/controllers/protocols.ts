@@ -34,3 +34,23 @@ export interface IUsersController {
     httpRequest: HttpRequest<{ id: number }>
   ): Promise<HttpResponse<boolean>>; */
 }
+export interface CaixasPaletizadaMobileResult {
+  fkpalet: number;
+  idromaneio: number;
+  rom_romaneio: string;
+  rom_talhao: string;
+  rom_dtcolheita: string;
+  rom_dtchegada: string; 
+  emp_razaoSocial: string;
+  fkempresa: number;
+  endereco: string;
+  cidade: string;
+  pro_descricao: string;
+  tam_descricao: string;
+  cai_descricao: string;
+  Cademb_nome: string;
+  palcai_qtd: number; // Ou number/Decimal
+  palcai_peso: number; // Ou number/Decimal
+  // Adicione a propriedade 'codigo' que você adiciona no final
+  codcaixa?: string; // Opcional, pois você o adiciona depois
+}
