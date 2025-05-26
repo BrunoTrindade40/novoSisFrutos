@@ -4,3 +4,6 @@ node_modules
 
 prisma/.cache
 src/generated
+
+coverage/
+jest-cache/

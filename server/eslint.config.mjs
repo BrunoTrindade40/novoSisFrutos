@@ -17,6 +17,7 @@ export default defineConfig([
       globals: {
         ...globals.browser,
         ...globals.node,
+        ...globals.jest,
       },
       parser: typescriptParser, // Adicione o parser do TypeScript aqui
       parserOptions: {
