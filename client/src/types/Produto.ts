@@ -12,4 +12,9 @@ export interface Produto {
   cidade: string;
   rom_dtcolheita: string;
   rom_dtchegada: string;
+  fkpalet?: number;
+  idromaneio?: number;
+  fkempresa?: number;
+  palcai_peso?: string;
+  
 }

@@ -98,4 +98,22 @@ describe("ProdutoController", () => {
     expect(res.status).toHaveBeenCalledWith(400);
     expect(res.json).toHaveBeenCalled();
   });
+
+  it("deve retornar 500 em caso de erro inesperado", async () => {
+    const req = {
+      params: { codigo: "023-000.019.018" },
+    } as unknown as Request;
+    const res = mockResponse();
+
+    mockService.getProdutoByCodigo.mockRejectedValue(new Error("Falha inesperada"));
+
+    await controller.getProdutoPorCodigo(req, res);
+
+    expect(res.status).toHaveBeenCalledWith(500);
+    expect(res.json).toHaveBeenCalledWith({
+      error: "Erro ao buscar Produtos.",
+      detalhes: "Falha inesperada",
+    });
+  });
+
 });

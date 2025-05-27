@@ -40,10 +40,11 @@ export function FormInput({ control,
         {loading ? 'Carregando...' : 'Enviar'}
       </Button>
       {error && (
-        <Typography variant="body2" color="error">
+        <p data-testid={`erro-${name}`} style={{ color: 'red' }}>
           {error}
-        </Typography>
+        </p>
       )}
+
     </Box>
   );
 }

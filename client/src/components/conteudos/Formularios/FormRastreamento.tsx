@@ -13,9 +13,9 @@ import { Loader } from './Loader';
 
 const formSchema = z.object({
   codigo: z
-    .string()
+    .string({ required_error: 'Campo obrigatório' })
     .min(1, { message: 'Campo obrigatório' })
-    .regex(/^\d{3}-\d{3}\.\d{3}\.\d{3}$/, 'Formato inválido'),
+    .regex(/^\d{3}-\d{3}\.\d{3}\.\d{3}$/, { message: 'Formato inválido' }),
 });
 type FormValues = z.infer<typeof formSchema>;
 
