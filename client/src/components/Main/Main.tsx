@@ -7,13 +7,19 @@ type MainProps = {
 
 export const Main: React.FC<MainProps> = ({ children }: MainProps) => {
   return (
-    <main>
-      <Container>
+    <Box
+      component="main"
+      sx={{
+        flexGrow: 1,
+        py: 4, 
+      }}
+    >
+      <Container maxWidth="md">
         <Box>
           {/* Aqui se renderiza o conteúdo JSX */}
           {children}
         </Box>
       </Container>
-    </main>
+    </Box>
   );
 };

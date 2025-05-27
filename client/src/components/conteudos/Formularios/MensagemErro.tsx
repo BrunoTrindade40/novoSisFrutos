@@ -6,7 +6,7 @@ interface MensagemErroProps {
 
 export function MensagemErro({ mensagem }: MensagemErroProps) {
   return (
-    <Box display="flex" justifyContent="center" mt={2}>
+    <Box sx={{ display: "flex", justifyContent: "center", mt: 2 }}> {/* Usando sx para consistência */}
       <Alert severity="error">{mensagem}</Alert>
     </Box>
   );

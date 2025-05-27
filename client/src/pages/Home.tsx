@@ -5,16 +5,29 @@ import { Footer } from '../components/Footer/Footer';
 import { TextoRastreamentoDeFrutos } from '../components/conteudos/Textos/TextoRastreamentoDeFrutos';
 import { FormRastreamento } from '../components/conteudos/Formularios/FormRastreamento';
 
+import { ThemeProvider, CssBaseline, Box } from '@mui/material';
+import theme from '../theme';
+
 const Home: React.FC = () => {
   return (
-    <>
-      <Header></Header>
-      <Main>
-        <TextoRastreamentoDeFrutos></TextoRastreamentoDeFrutos>
-        <FormRastreamento></FormRastreamento>
-      </Main>
-      <Footer></Footer>
-    </>
+    <ThemeProvider theme={theme}>
+      <CssBaseline />
+      <Box
+        sx={{
+          display: 'flex',
+          flexDirection: 'column',
+          minHeight: '100vh',
+        }}
+      >
+        <Header />
+        <Main>
+          <TextoRastreamentoDeFrutos /> {/* Componente de texto */}
+          <FormRastreamento /> {/* Componente de formulário */}
+        </Main>
+
+        <Footer />
+      </Box>
+    </ThemeProvider>
   );
 };
 
