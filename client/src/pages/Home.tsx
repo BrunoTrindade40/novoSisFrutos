@@ -21,8 +21,8 @@ const Home: React.FC = () => {
       >
         <Header />
         <Main>
-          <TextoRastreamentoDeFrutos /> {/* Componente de texto */}
-          <FormRastreamento /> {/* Componente de formulário */}
+          <TextoRastreamentoDeFrutos />
+          <FormRastreamento />
         </Main>
 
         <Footer />

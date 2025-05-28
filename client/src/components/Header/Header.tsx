@@ -1,15 +1,11 @@
 import React from 'react';
-// import styles from './Header.module.css'; // REMOVA esta linha
-import { AppBar, Toolbar, Box, Typography, styled } from '@mui/material'; // Adicione AppBar, Toolbar, Typography, styled
+import { AppBar, Toolbar, Box, Typography, styled } from '@mui/material';
 import { Logo } from '../conteudos/Logo/Logo';
-import imgLogo from '../../assets/images/logo_resized_200px-transparent.png';
+import imgLogo from '../../assets/images/logo ok_transparente.svg';
 
-// Opcional: Se você quiser que o logo seja clicável como um link
-// O componente Logo precisa aceitar props de styled-components ou Box para passar para o <img> ou <Link> interno
 const StyledLogoContainer = styled(Box)(({ theme }) => ({
   display: 'flex',
   alignItems: 'center',
-  // Se precisar de estilos adicionais para o container do logo
 }));
 
 export const Header: React.FC = () => {
@@ -28,7 +24,6 @@ export const Header: React.FC = () => {
             </Typography>
           </Box>
         </Box>
-        {/* Você pode adicionar outros elementos aqui, como um menu ou botões */}
       </Toolbar>
     </AppBar>
   );

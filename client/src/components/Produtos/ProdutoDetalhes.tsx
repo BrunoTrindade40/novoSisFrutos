@@ -10,32 +10,28 @@ export function ProdutoDetalhes({ produto }: Props) {
     // Envolver tudo em um Paper para dar um visual de card aos detalhes
     <Paper
       sx={{
-        mt: 4, // Margem superior para separar do formulário ou mensagem de erro
-        p: { xs: 2, md: 4 }, // Padding responsivo (menor em telas pequenas, maior em md+)
-        backgroundColor: 'background.paper', // Usa a cor de fundo do Paper do tema (geralmente branco)
-        borderRadius: 2, // Borda arredondada
-        boxShadow: 3, // Sombra para dar profundidade
+        mt: 4,
+        p: { xs: 2, md: 4 },
+        backgroundColor: 'background.paper',
+        borderRadius: 2,
+        boxShadow: 3,
       }}
     >
-      {/* Título "Detalhes do Produto" */}
-      <Box sx={{ display: 'flex', justifyContent: 'center', mb: 3 }}> {/* mb para separar do conteúdo */}
+      <Box sx={{ display: 'flex', justifyContent: 'center', mb: 3 }}>
         <Typography variant="h5" component="h2" sx={{ fontWeight: 'bold' }}>
           Detalhes do Produto
         </Typography>
       </Box>
 
-      {/* Conteúdo dos detalhes (duas colunas) */}
       <Box
         sx={{
           display: 'flex',
-          flexWrap: 'wrap', // Permite que as colunas quebrem para a próxima linha em telas menores
-          gap: { xs: 2, md: 6 }, // Espaçamento entre as colunas (responsivo)
-          justifyContent: { xs: 'flex-start', md: 'center' }, // Alinha à esquerda em sm, centraliza em md+
-          // Removido backgroundColor aqui, pois o Paper já define o fundo
+          flexWrap: 'wrap',
+          gap: { xs: 2, md: 6 },
+          justifyContent: { xs: 'flex-start', md: 'center' },
         }}
       >
-        {/* Primeira Coluna de Detalhes */}
-        <Box sx={{ minWidth: { xs: '100%', sm: 250 }, mb: { xs: 2, md: 0 } }}> {/* Ocupa 100% em xs, minWidth em sm+ */}
+        <Box sx={{ minWidth: { xs: '100%', sm: 250 }, mb: { xs: 2, md: 0 } }}>
           <Typography variant="body1" sx={{ mb: 1 }}>
             <strong>Código:</strong> {produto.codcaixa}
           </Typography>
@@ -56,8 +52,7 @@ export function ProdutoDetalhes({ produto }: Props) {
           </Typography>
         </Box>
 
-        {/* Segunda Coluna de Detalhes */}
-        <Box sx={{ minWidth: { xs: '100%', sm: 250 } }}> {/* Ocupa 100% em xs, minWidth em sm+ */}
+        <Box sx={{ minWidth: { xs: '100%', sm: 250 } }}>
           <Typography variant="body1" sx={{ mb: 1 }}>
             <strong>Talhão:</strong> {produto.rom_talhao}
           </Typography>
