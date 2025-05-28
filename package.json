@@ -1,8 +1,7 @@
 {
-  "devDependencies": {
-    "husky": "^9.1.7",
-    "lint-staged": "^16.1.0"
-  },
+  "name": "novosisfrutos",
+  "version": "1.0.0",
+  "private": true,
   "scripts": {
     "prepare": "husky install",
     "lint": "eslint . --ext .ts,.tsx,.js,.jsx --fix",
@@ -10,6 +9,11 @@
     "test:server": "cd server && npm run test",
     "test": "npm run test:client && npm run test:server",
     "test:staged": "npm run test"
+  },
+  "devDependencies": {
+    "husky": "^9.0.0",
+    "lint-staged": "^15.0.0",
+    "prettier": "^3.0.0"
   },
   "lint-staged": {
     "*.{ts,tsx,js,jsx}": [
