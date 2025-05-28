@@ -8,8 +8,8 @@ import { zodResolver } from '@hookform/resolvers/zod';
 import type { Produto } from '../../../types/Produto';
 import { ProdutoDetalhes } from '../../Produtos/ProdutoDetalhes';
 import { buscarProdutoPorCodigo } from '../../../services/api';
-import { FormInput } from './FormInput'; // O FormInput corrigido
-import { MensagemErro } from './MensagemErro'; // A MensagemErro adaptada
+import { FormInput } from './FormInput';
+import { MensagemErro } from './MensagemErro';
 
 const formSchema = z.object({
   codigo: z
@@ -63,7 +63,6 @@ export function FormRastreamento() {
         reset();
       }
     } catch (error) {
-      console.error('Erro ao enviar o código:', error);
       if (error instanceof Error) {
         setErro(`Falha na busca: ${error.message}`);
       } else {
@@ -93,9 +92,9 @@ export function FormRastreamento() {
 
           {/* Componente FormInput */}
           <FormInput
-            control={control as Control<FormValues>} // Especificar o tipo do control
+            control={control as Control<FormValues>}
             name="codigo"
-            label="Código"
+            ariaLabel="Código"
             placeholder="000-000.000.000"
             error={errors.codigo?.message}
             loading={loading}

@@ -43,6 +43,7 @@ interface FormInputProps {
   placeholder?: string;
   error?: string;
   loading: boolean;
+  ariaLabel?: string;
 }
 
 export function FormInput({
@@ -52,6 +53,7 @@ export function FormInput({
   placeholder,
   error,
   loading,
+  ariaLabel,
 }: FormInputProps) {
   return (
     <Controller
@@ -73,6 +75,7 @@ export function FormInput({
           InputProps={{
             inputComponent: MaskedInput, // Agora o tipo deve ser compatível
             disableUnderline: true, // Para a variante "filled"
+            'aria-label': ariaLabel,
           }}
           // Estilos específicos para o TextField e seu input
           sx={{

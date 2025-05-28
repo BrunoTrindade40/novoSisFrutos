@@ -35,9 +35,18 @@ describe('FormRastreamento', () => {
     codcaixa: '000000000000',
   };
 
+  let consoleErrorSpy: vi.SpyInstance;
   // Limpa o histórico dos mocks entre os testes
   beforeEach(() => {
     vi.clearAllMocks();
+    // Espiona (mocka) console.error para evitar que os erros sejam impressos durante os testes
+    // e permite verificar se console.error foi chamado, se necessário.
+    consoleErrorSpy = vi.spyOn(console, 'error').mockImplementation(() => {});
+  });
+
+  afterEach(() => {
+    // Restaura a implementação original de console.error após cada teste
+    consoleErrorSpy.mockRestore();
   });
 
   // Teste 1: Renderiza o formulário corretamente
@@ -137,21 +146,17 @@ describe('FormRastreamento', () => {
     mockedApi.mockReturnValue(new Promise(() => {})); // Nunca resolve
 
     render(<FormRastreamento />);
-    const input = screen.getByLabelText(/código/i);
+    const inputElement = screen.getByLabelText(/código/i).querySelector('input')!; // Adicione o "!" aqui
     const submitButton = screen.getByRole('button', { name: /enviar/i });
 
-    await userEvent.type(input, '000-000.000.000');
+    await userEvent.type(inputElement, '000-000.000.000');
     await userEvent.click(submitButton);
 
     await waitFor(() => {
-      // screen.debug(); // Mantenha isso se quiser continuar depurando o DOM completo
-      // screen.debug(submitButton); // Ou apenas o botão para focar
-
-      // ESTA É A LINHA CORRETA QUE DEVE FICAR E VAI PASSAR:
       expect(screen.getByRole('progressbar')).toBeInTheDocument();
 
-      // Verificações adicionais
-      expect(input).toBeDisabled();
+      // Verificações adicionais - altere para verificar o atributo disabled
+      expect(inputElement).toHaveAttribute('disabled');
       expect(submitButton).toBeDisabled();
     });
   });
@@ -159,7 +164,7 @@ describe('FormRastreamento', () => {
   // Teste 8: Limpa o produto e o erro ao iniciar nova busca
   it('limpa o produto e o erro ao iniciar nova busca', async () => {
     const mockedApi = api.buscarProdutoPorCodigo as ReturnType<typeof vi.fn>;
-    
+
     // Primeiro cenário: busca com sucesso
     mockedApi.mockResolvedValueOnce({
       ok: true,
@@ -167,7 +172,9 @@ describe('FormRastreamento', () => {
     });
 
     render(<FormRastreamento />);
-    await userEvent.type(screen.getByLabelText(/código/i), '000-000.000.000');
+    const inputElement = screen.getByLabelText(/código/i).querySelector('input')!; // Adicione o "!" aqui
+
+    await userEvent.type(inputElement, '000-000.000.000');
     await userEvent.click(screen.getByRole('button', { name: /enviar/i }));
 
     await waitFor(() => {
@@ -183,8 +190,8 @@ describe('FormRastreamento', () => {
 
     // Clica novamente no botão enviar (pode ser necessário limpar o input primeiro se a validação impedir)
     // Para este teste, vamos garantir que o input está limpo para nova digitação
-    await userEvent.clear(screen.getByLabelText(/código/i));
-    await userEvent.type(screen.getByLabelText(/código/i), '111-111.111.111');
+    await userEvent.clear(inputElement); // Use o inputElement para o clear
+    await userEvent.type(inputElement, '111-111.111.111');
     await userEvent.click(screen.getByRole('button', { name: /enviar/i }));
 
     await waitFor(() => {
