@@ -8,6 +8,7 @@ function AppRouter() {
       <BrowserRouter>
         <Routes>
           <Route path="/" element={<Home />} />
+          <Route path="/rastrear/:codigoNaUrl" element={<Home />} />
         </Routes>
       </BrowserRouter>
     </>

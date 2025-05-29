@@ -1,6 +1,5 @@
-// FormRastreamento.tsximport { useState } from 'react';
-import { useState } from 'react';
-import { Paper, Button, Typography, CircularProgress } from '@mui/material';
+import { useEffect, useState } from 'react';
+import { Paper, Button, CircularProgress } from '@mui/material';
 import { useForm, type SubmitHandler, type Control } from 'react-hook-form'; // Importar Control
 import { z } from 'zod';
 import { zodResolver } from '@hookform/resolvers/zod';
@@ -10,6 +9,7 @@ import { ProdutoDetalhes } from '../../Produtos/ProdutoDetalhes';
 import { buscarProdutoPorCodigo } from '../../../services/api';
 import { FormInput } from './FormInput';
 import { MensagemErro } from './MensagemErro';
+import { useParams } from 'react-router-dom';
 
 const formSchema = z.object({
   codigo: z
@@ -23,11 +23,13 @@ export function FormRastreamento() {
   const [produto, setProduto] = useState<Produto | null>(null);
   const [erro, setErro] = useState<string | null>(null);
   const [loading, setLoading] = useState(false);
+  const { codigoNaUrl } = useParams<{ codigoNaUrl?: string }>(); // Obtém o parâmetro da URL
 
   const {
     control,
     handleSubmit,
     reset,
+    setValue, // Importe setValue
     formState: { errors },
   } = useForm<FormValues>({
     resolver: zodResolver(formSchema),
@@ -73,6 +75,23 @@ export function FormRastreamento() {
       setLoading(false);
     }
   };
+
+  useEffect(() => {
+    if (codigoNaUrl) {
+      // Verifica o formato do código recebido pela URL
+      const codigoRegex = /^\d{3}-\d{3}\.\d{3}\.\d{3}$/;
+      if (codigoRegex.test(codigoNaUrl)) {
+        // Se o formato for válido, preenche o campo do formulário
+        setValue('codigo', codigoNaUrl);
+        // Simula o submit do formulário
+        handleSubmit(onSubmit)();
+      } else {
+        // Se o formato for inválido, você pode exibir uma mensagem de erro ou fazer outra ação
+        setErro('O código na URL possui um formato inválido.');
+      }
+    }
+    // O array de dependências vazio garante que este efeito execute apenas uma vez na montagem do componente
+  }, [codigoNaUrl, handleSubmit, setValue, setErro]);
 
   return (
     <>
