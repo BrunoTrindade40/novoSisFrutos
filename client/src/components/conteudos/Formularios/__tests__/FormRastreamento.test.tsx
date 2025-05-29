@@ -2,7 +2,6 @@ import { render, screen, waitFor } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import { vi } from 'vitest';
 import { useParams } from 'react-router-dom';
-import * as reactHookForm from 'react-hook-form'; // Importe reactHookForm
 import { FormRastreamento } from '../FormRastreamento';
 import * as api from '../../../../services/api';
 import type { Produto } from '../../../../types/Produto';
@@ -28,7 +27,7 @@ vi.mock('./FormInput', () => ({
         placeholder={placeholder}
         name={name}
         value={field.value || ''}
-        onChange={(e) => field.onChange(e.target.value)}
+        onChange={field.onChange}
         disabled={loading}
       />
     );
@@ -162,8 +161,6 @@ describe('FormRastreamento', () => {
       Controller: ({ render }: any) => render({ field: { onChange: vi.fn(), value: '' }, fieldState: { invalid: false } }),
     }));
 
-    const { useForm } = await import('react-hook-form'); // Importe useForm após o mock
-
     render(<FormRastreamento />);
     const inputElement = screen.getByLabelText(/código/i).querySelector('input')!;
     const submitButton = screen.getByRole('button', { name: /enviar/i });
@@ -214,25 +211,22 @@ describe('FormRastreamento', () => {
   });
 
   it('preenche e submete o formulário com código da URL se formato válido', async () => {
-    (useParams as ReturnType<typeof vi.fn>).mockReturnValue({ codigoNaUrl: '123-456.789.012' });
-    const mockedApi = api.buscarProdutoPorCodigo as ReturnType<typeof vi.fn>;
-    mockedApi.mockResolvedValue({
-      ok: true,
-      json: async () => produtoMock,
-    });
-
-    render(<FormRastreamento />);
-
-    await waitFor(() => {
-      const inputElement = screen.getByLabelText(/código/i).querySelector('input')!;
-      userEvent.type(inputElement, '123-456.789.012'); // Simula a digitação no campo
-      const submitButton = screen.getByRole('button', { name: /enviar/i });
-      userEvent.click(submitButton); // Simula o clique no botão enviar
-
-      expect(api.buscarProdutoPorCodigo).toHaveBeenCalledWith('123-456.789.012');
-      expect(screen.getByText(/detalhes do produto/i)).toBeInTheDocument();
-    });
+  (useParams as ReturnType<typeof vi.fn>).mockReturnValue({ codigoNaUrl: '123-456.789.012' });
+  const mockedApi = api.buscarProdutoPorCodigo as ReturnType<typeof vi.fn>;
+  mockedApi.mockResolvedValue({
+    ok: true,
+    json: async () => produtoMock,
   });
+
+  render(<FormRastreamento />);
+
+  await waitFor(() => {
+    const inputElement = screen.getByLabelText(/código/i).querySelector('input')!;
+    expect(inputElement).toHaveValue('123-456.789.012');
+    expect(api.buscarProdutoPorCodigo).toHaveBeenCalledWith('123-456.789.012');
+    expect(screen.getByText(/detalhes do produto/i)).toBeInTheDocument();
+  });
+});
 
   it('exibe erro se o código da URL tiver formato inválido', async () => {
     (useParams as ReturnType<typeof vi.fn>).mockReturnValue({ codigoNaUrl: '123456' });
