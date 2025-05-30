@@ -1,12 +1,7 @@
 import React from 'react';
-import { AppBar, Toolbar, Box, Typography, styled } from '@mui/material';
+import { AppBar, Toolbar, Box, Typography } from '@mui/material';
 import { Logo } from '../conteudos/Logo/Logo';
 import imgLogo from '../../assets/images/logo ok_transparente.svg';
-
-const StyledLogoContainer = styled(Box)(({ theme }) => ({
-  display: 'flex',
-  alignItems: 'center',
-}));
 
 export const Header: React.FC = () => {
   return (

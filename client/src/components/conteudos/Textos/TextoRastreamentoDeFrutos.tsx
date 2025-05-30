@@ -1,4 +1,3 @@
-import React from "react";
 import { Typography, Box, Container } from "@mui/material";
 
 export function TextoRastreamentoDeFrutos() {

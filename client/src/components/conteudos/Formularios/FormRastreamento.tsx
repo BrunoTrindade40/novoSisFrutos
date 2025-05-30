@@ -29,7 +29,7 @@ export function FormRastreamento() {
     control,
     handleSubmit,
     reset,
-    setValue, // Importe setValue
+    setValue,
     formState: { errors },
   } = useForm<FormValues>({
     resolver: zodResolver(formSchema),

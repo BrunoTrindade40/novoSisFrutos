@@ -4,8 +4,6 @@ import { ProdutoController } from '../controllers/produtos.controller'; // Ajust
 const produtoRoutes: Router = express.Router();
 const produtoController = new ProdutoController();
 
-//produtoRoutes.get('/', produtoController.handleGetProdutos);
 produtoRoutes.get('/:codigo', (req, res) => produtoController.getProdutoPorCodigo(req, res));
-//produtoRoutes.post('/novo', produtoController.handleCreateProduto);
 
 export default produtoRoutes;

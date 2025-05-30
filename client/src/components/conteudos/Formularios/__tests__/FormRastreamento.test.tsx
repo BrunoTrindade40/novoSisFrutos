@@ -1,6 +1,6 @@
 import { render, screen, waitFor } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
-import { vi } from 'vitest';
+import { vi, type SpyInstance } from 'vitest';
 import { useParams } from 'react-router-dom';
 import { FormRastreamento } from '../FormRastreamento';
 import * as api from '../../../../services/api';

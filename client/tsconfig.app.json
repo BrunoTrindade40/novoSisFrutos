@@ -9,7 +9,7 @@
 
     /* Bundler mode */
     "moduleResolution": "bundler",
-    "allowImportingTsExtensions": true,
+    //"allowImportingTsExtensions": true,
     "verbatimModuleSyntax": true,
     "moduleDetection": "force",
     "noEmit": true,
@@ -22,8 +22,8 @@
     "erasableSyntaxOnly": true,
     "noFallthroughCasesInSwitch": true,
     "noUncheckedSideEffectImports": true,
-    "types": ["vitest/globals", "jest", "@testing-library/jest-dom"]
+    "types": ["vitest", "vitest/globals", "jest", "@testing-library/jest-dom"]
   },
-  "include": ["src", "src/types"],
+  "include": ["src", "src/types", "src/**/__tests__/*.(ts|tsx)"],
   "typeRoots": ["node_modules/@types"]
 }

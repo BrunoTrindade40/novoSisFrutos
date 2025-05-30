@@ -6,7 +6,7 @@ interface LogoProps {
   imgLogoSrc: string
 }
 // 1. Crie um componente Link estilizado que aceita a prop sx
-const StyledLink = styled(Link)(({ theme }) => ({
+const StyledLink = styled(Link)(({ }) => ({
   display: 'flex',       // Para alinhar a imagem (e o texto, se houver)
   alignItems: 'center',
   textDecoration: 'none', // Remove o sublinhado padrão dos links

@@ -25,7 +25,7 @@ const MaskedInput = React.forwardRef<HTMLInputElement, CustomMaskInputProps>(fun
       {...other}
       mask="000-000.000.000"
       unmask={false}
-      onAccept={(value: string, mask: any, e: any) => {
+      onAccept={(value: string, _mask: any, _e: any) => {
         if (onChange) {
           onChange({ target: { name: props.name, value: value } as HTMLInputElement }); // Assegura o tipo correto para o target
         }
