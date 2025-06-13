@@ -1,5 +1,5 @@
 import js from "@eslint/js";
-import typescriptParser from "@typescript-eslint/parser"; // Importe o parser do TypeScript
+import typescriptParser from "@typescript-eslint/parser";
 import pluginReact from "eslint-plugin-react";
 import { defineConfig } from "eslint/config";
 import globals from "globals";
@@ -8,39 +8,44 @@ import tseslint from "typescript-eslint";
 export default defineConfig([
   {
     files: ["**/*.{js,mjs,cjs,ts,jsx,tsx}"],
-    plugins: { js },
-    extends: ["js/recommended"],
-  },
-  {
-    files: ["**/*.{js,mjs,cjs,ts,jsx,tsx}"],
     languageOptions: {
       globals: {
         ...globals.browser,
         ...globals.node,
         ...globals.jest,
       },
-      parser: typescriptParser, // Adicione o parser do TypeScript aqui
+      parser: typescriptParser,
       parserOptions: {
-        ecmaVersion: "latest", // Ou a versão do ECMAScript que você deseja suportar
-        sourceType: "module", // Se seus arquivos usam import/export
+        ecmaVersion: "latest",
+        sourceType: "module",
         ecmaFeatures: {
-          jsx: true, // Habilita o suporte a JSX
+          jsx: true,
         },
-        project: "./tsconfig.json", // Caminho para o seu arquivo tsconfig.json (importante para TypeScript)
+        // 🛠️ Removido o "project" daqui (aplicamos apenas em arquivos incluídos no tsconfig)
       },
     },
     plugins: {
-      "@typescript-eslint": tseslint.plugin, // Garante que o plugin do TypeScript seja usado
-      react: pluginReact, // Garante que o plugin do React seja usado
+      js,
+      "@typescript-eslint": tseslint.plugin,
+      react: pluginReact,
     },
     rules: {
-      ...tseslint.configs.recommended.rules, // Adiciona as regras recomendadas do TypeScript
-      ...pluginReact.configs.recommended.rules, // Adiciona as regras recomendadas do React
-      // Adicione suas regras personalizadas aqui
+      ...tseslint.configs.recommended.rules,
+      ...pluginReact.configs.recommended.rules,
     },
     settings: {
       react: {
-        version: "detect", // Para detectar automaticamente a versão do React
+        version: "detect",
+      },
+    },
+  },
+
+  // ✅ Aplica `parserOptions.project` apenas a arquivos no escopo do tsconfig.json
+  {
+    files: ["src/**/*.{ts,tsx}"],
+    languageOptions: {
+      parserOptions: {
+        project: "./tsconfig.json",
       },
     },
   },

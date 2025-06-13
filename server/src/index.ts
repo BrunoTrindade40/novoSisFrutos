@@ -5,11 +5,24 @@ import router from "./routes";
 import path from "path";
 config();
 
+const allowedOrigins = [
+  'https://sisfrutos-adelphofrutas.com.br',      // Produção
+  'https://localhost:3000'                       // Desenvolvimento (exemplo)
+];
+
 const app = express();
 const port = process.env.PORT || 3000;
 
 app.use(express.json());
-app.use(cors());
+app.use(cors({
+  origin: function (origin, callback) {
+    if (!origin || allowedOrigins.includes(origin)) {
+      callback(null, true);
+    } else {
+      callback(new Error('Não permitido pelo CORS'));
+    }
+  }
+}));
 
 app.use("/api", router);
 

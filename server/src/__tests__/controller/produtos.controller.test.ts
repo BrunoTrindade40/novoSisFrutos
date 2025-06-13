@@ -1,5 +1,5 @@
-import { ProdutoController } from "../../src/controllers/produtos.controller";
-import { ProdutoService } from "../../src/services/produtos.service";
+import { ProdutoController } from "../../controllers/produtos.controller";
+import { ProdutoService } from "../../services/produtos.service";
 import { Request, Response } from "express";
 
 jest.mock("../../src/services/produtos.service");

@@ -3,7 +3,11 @@ node_modules
 .env
 
 prisma/.cache
-src/generated
+generated
 
 coverage/
 jest-cache/
+
+dist/
+dist-obfuscated/
+obfuscate.js

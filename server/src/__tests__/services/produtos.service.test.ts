@@ -1,5 +1,5 @@
-import { ProdutoService } from "../../src/services/produtos.service";
-import { prisma } from "../../src/prisma/client";
+import { ProdutoService } from "../../services/produtos.service";
+import { prisma } from "../../prisma/client";
 
 jest.mock("../../src/prisma/client", () => ({
   prisma: {
