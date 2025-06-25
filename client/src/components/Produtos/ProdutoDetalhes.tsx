@@ -1,4 +1,4 @@
-import { Box, Typography, Paper } from '@mui/material'; // Adicionar Typography e Paper
+import { Box, Typography, Paper, Divider } from '@mui/material'; // Adicionar Typography e Paper
 import type { Produto } from '../../types/Produto';
 
 interface Props {
@@ -27,49 +27,60 @@ export function ProdutoDetalhes({ produto }: Props) {
         sx={{
           display: 'flex',
           flexWrap: 'wrap',
-          gap: { xs: 2, md: 6 },
-          justifyContent: { xs: 'flex-start', md: 'center' },
+          gap: { xs: 2 },
+          justifyContent: 'flex-start',
         }}
       >
-        <Box sx={{ minWidth: { xs: '100%', sm: 250 }, mb: { xs: 2, md: 0 } }}>
+        <Box sx={{ minWidth: { xs: '100%', sm: 250 } }}>
           <Typography variant="body1" sx={{ mb: 1 }}>
-            <strong>Código:</strong> {produto.codcaixa}
+            <strong>Código:</strong> {produto.codigoCaixa}
           </Typography>
           <Typography variant="body1" sx={{ mb: 1 }}>
-            <strong>Nome:</strong> {produto.cai_descricao}
+            <strong>Produto:</strong> {produto.nomeProduto}
           </Typography>
           <Typography variant="body1" sx={{ mb: 1 }}>
-            <strong>Descrição:</strong> {produto.pro_descricao}
+            <strong>Embalador:</strong> {produto.nomeEmbalador}
           </Typography>
           <Typography variant="body1" sx={{ mb: 1 }}>
-            <strong>Produtor:</strong> {produto.emp_razaoSocial}
+            <strong>Embalagem:</strong> {produto.embalagem}
           </Typography>
           <Typography variant="body1" sx={{ mb: 1 }}>
-            <strong>Romaneio:</strong> {produto.rom_romaneio}
+            <strong>Data da Colheita:</strong>
+            {new Date(produto.dataColheita).toLocaleDateString()}
           </Typography>
           <Typography variant="body1" sx={{ mb: 1 }}>
-            <strong>Endereço:</strong> {produto.endereco}
+            <strong>Data de Chegada:</strong>
+            {new Date(produto.dataChegada).toLocaleDateString()}
+          </Typography>
+          <Typography variant="body1" sx={{ mb: 1 }}>
+            <strong>Produtor:</strong> {produto.produtorEmpresa}
+          </Typography>
+          <Typography variant="body1" sx={{ mb: 1 }}>
+            <strong>Endereço:</strong> {produto.endereco} - {produto.cidade}
           </Typography>
         </Box>
 
         <Box sx={{ minWidth: { xs: '100%', sm: 250 } }}>
           <Typography variant="body1" sx={{ mb: 1 }}>
-            <strong>Talhão:</strong> {produto.rom_talhao}
+            <strong>Romaneio:</strong> {produto.numeroRomaneio} -
+            {produto.talhaoRomaneio}
+          </Typography>
+        </Box>
+      </Box>
+      <Divider sx={{ my: 3 }} />
+      <Box
+        sx={{
+          display: 'flex',
+          gap: { xs: 2, md: 6 },
+          justifyContent: 'flex-start',
+        }}
+      >
+        <Box sx={{ minWidth: { xs: '100%', sm: 250 } }}>
+          <Typography variant="body1" sx={{ mb: 1 }}>
+            <strong>GGN:</strong>4063061703682
           </Typography>
           <Typography variant="body1" sx={{ mb: 1 }}>
-            <strong>Quantidade Pallet:</strong> {produto.palcai_qtd}
-          </Typography>
-          <Typography variant="body1" sx={{ mb: 1 }}>
-            <strong>Embalador:</strong> {produto.Cademb_nome}
-          </Typography>
-          <Typography variant="body1" sx={{ mb: 1 }}>
-            <strong>Cidade:</strong> {produto.cidade}
-          </Typography>
-          <Typography variant="body1" sx={{ mb: 1 }}>
-            <strong>Data da Colheita:</strong> {new Date(produto.rom_dtcolheita).toLocaleDateString()}
-          </Typography>
-          <Typography variant="body1" sx={{ mb: 1 }}>
-            <strong>Data de Chegada:</strong> {new Date(produto.rom_dtchegada).toLocaleDateString()}
+            <strong>Registration Number:</strong>PLCH17063
           </Typography>
         </Box>
       </Box>

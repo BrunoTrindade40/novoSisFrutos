@@ -15,7 +15,7 @@ describe("ProdutoService", () => {
 
     const mockResultado = [
       {
-        codcaixa: mockCodigo,
+        palcai_codigo: mockCodigo,
         nome: "Produto Teste",
       },
     ];
@@ -25,7 +25,7 @@ describe("ProdutoService", () => {
     const resultado = await service.getProdutoByCodigo(mockCodigo);
 
     expect(resultado).toEqual({
-      codcaixa: mockCodigo,
+      palcai_codigo: mockCodigo,
       nome: "Produto Teste",
     });
 

@@ -28,46 +28,46 @@ describe("ProdutoController", () => {
     const res = mockResponse();
 
     mockService.getProdutoByCodigo.mockResolvedValue({
-        "fkpalet": 3711,
-        "idromaneio": 431,
-        "rom_romaneio": "18708",
-        "rom_talhao": "2  ",
-        "rom_dtcolheita": "2022-08-11T00:00:00.000Z",
-        "rom_dtchegada": "2022-08-11T00:00:00.000Z",
-        "emp_razaoSocial": "Frutas Yang",
-        "fkempresa": 6,
-        "endereco": "CORREGO DA CALIFORNIA",
-        "cidade": "Caravelas-BA",
-        "pro_descricao": "Mamão Formosa",
-        "tam_descricao": "Sem Calibre",
-        "cai_descricao": "Caixa Papelao 10kg - Formosa",
-        "Cademb_nome": "DIEGO DE OLIVEIRA MATEUS ",
-        "palcai_qtd": 1,
-        "palcai_peso": 8,
-        "codcaixa": "023000019018"
+      fkpalet: 3711,
+      idromaneio: 431,
+      rom_romaneio: "18708",
+      rom_talhao: "2  ",
+      rom_dtcolheita: "2022-08-11T00:00:00.000Z",
+      rom_dtchegada: "2022-08-11T00:00:00.000Z",
+      emp_razaoSocial: "Frutas Yang",
+      fkempresa: 6,
+      endereco: "CORREGO DA CALIFORNIA",
+      cidade: "Caravelas-BA",
+      pro_descricao: "Mamão Formosa",
+      tam_descricao: "Sem Calibre",
+      cai_descricao: "Caixa Papelao 10kg - Formosa",
+      Cademb_nome: "DIEGO DE OLIVEIRA MATEUS ",
+      palcai_qtd: 1,
+      palcai_peso: 8,
+      palcai_codigo: "023000019018",
     });
 
     await controller.getProdutoPorCodigo(req, res);
 
     expect(res.status).toHaveBeenCalledWith(200);
     expect(res.json).toHaveBeenCalledWith({
-        "fkpalet": 3711,
-        "idromaneio": 431,
-        "rom_romaneio": "18708",
-        "rom_talhao": "2  ",
-        "rom_dtcolheita": "2022-08-11T00:00:00.000Z",
-        "rom_dtchegada": "2022-08-11T00:00:00.000Z",
-        "emp_razaoSocial": "Frutas Yang",
-        "fkempresa": 6,
-        "endereco": "CORREGO DA CALIFORNIA",
-        "cidade": "Caravelas-BA",
-        "pro_descricao": "Mamão Formosa",
-        "tam_descricao": "Sem Calibre",
-        "cai_descricao": "Caixa Papelao 10kg - Formosa",
-        "Cademb_nome": "DIEGO DE OLIVEIRA MATEUS ",
-        "palcai_qtd": 1,
-        "palcai_peso": 8,
-        "codcaixa": "023000019018"
+      fkpalet: 3711,
+      idromaneio: 431,
+      rom_romaneio: "18708",
+      rom_talhao: "2  ",
+      rom_dtcolheita: "2022-08-11T00:00:00.000Z",
+      rom_dtchegada: "2022-08-11T00:00:00.000Z",
+      emp_razaoSocial: "Frutas Yang",
+      fkempresa: 6,
+      endereco: "CORREGO DA CALIFORNIA",
+      cidade: "Caravelas-BA",
+      pro_descricao: "Mamão Formosa",
+      tam_descricao: "Sem Calibre",
+      cai_descricao: "Caixa Papelao 10kg - Formosa",
+      Cademb_nome: "DIEGO DE OLIVEIRA MATEUS ",
+      palcai_qtd: 1,
+      palcai_peso: 8,
+      palcai_codigo: "023000019018",
     });
   });
 
@@ -105,7 +105,9 @@ describe("ProdutoController", () => {
     } as unknown as Request;
     const res = mockResponse();
 
-    mockService.getProdutoByCodigo.mockRejectedValue(new Error("Falha inesperada"));
+    mockService.getProdutoByCodigo.mockRejectedValue(
+      new Error("Falha inesperada")
+    );
 
     await controller.getProdutoPorCodigo(req, res);
 
@@ -115,5 +117,4 @@ describe("ProdutoController", () => {
       detalhes: "Falha inesperada",
     });
   });
-
 });

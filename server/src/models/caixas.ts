@@ -15,5 +15,5 @@ export interface CaixasPaletizadaMobileResult {
   Cademb_nome: string;
   palcai_qtd: number;
   palcai_peso: number;
-  codcaixa?: string;
+  palcai_codigo: string;
 }

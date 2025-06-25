@@ -1,19 +1,20 @@
 import { prisma } from "../prisma/client";
 import { CaixasPaletizadaMobileResult } from "../models/caixas";
+import { toCaixaPaletizada } from "../mappers/caixaPaletizada";
+import { CaixaPaletizada } from "../controllers/protocols";
 
 export class ProdutoService {
-  async getProdutoByCodigo(codigo: string): Promise<CaixasPaletizadaMobileResult | null> {
+  async getProdutoByCodigo(codigo: string): Promise<CaixaPaletizada | null> {
     const retornaDados = 1;
 
-    const resultado = await prisma.$queryRaw<CaixasPaletizadaMobileResult[]>`
+    const resultadoRaw = await prisma.$queryRaw<CaixasPaletizadaMobileResult[]>`
       EXEC sp_p_CaixasPaletizada_mobile @codcaixa=${codigo}, @retornaDados=${retornaDados}
     `;
-
-    if (resultado.length > 0) {
-      resultado[0].codcaixa = codigo; // sobrescreve com o código validado, se necessário
-      return resultado[0];
+    if (resultadoRaw && resultadoRaw.length > 0) {
+      // Mapeia o resultado "cru" para o nosso modelo de domínio "limpo"
+      const resultadoMapeado = toCaixaPaletizada(resultadoRaw[0]);
+      return resultadoMapeado;
     }
-
     return null;
   }
 }

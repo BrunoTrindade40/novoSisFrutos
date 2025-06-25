@@ -1,26 +1,31 @@
-import { Box, styled } from "@mui/material";
-import { Link } from "react-router-dom";
+import { Box, styled, type SxProps, type Theme } from '@mui/material';
+import { Link } from 'react-router-dom';
 
 interface LogoProps {
-  to: string,
-  imgLogoSrc: string
+  to: string;
+  imgLogoSrc: string;
+  sx?: SxProps<Theme>;
 }
 // 1. Crie um componente Link estilizado que aceita a prop sx
-const StyledLink = styled(Link)(({ }) => ({
-  display: 'flex',       // Para alinhar a imagem (e o texto, se houver)
+const StyledLink = styled(Link)(({}) => ({
+  display: 'flex', // Para alinhar a imagem (e o texto, se houver)
   alignItems: 'center',
   textDecoration: 'none', // Remove o sublinhado padrão dos links
-  color: 'inherit',      // Garante que a cor do texto seja herdada (se houver texto)
+  color: 'inherit', // Garante que a cor do texto seja herdada (se houver texto)
   // Adicione quaisquer outros estilos base que você queira aplicar ao link em si
   // Ex: '&:hover': { opacity: 0.8 },
 }));
 
-export const Logo: React.FC<LogoProps> = ({ to, imgLogoSrc }: LogoProps) => {
+export const Logo: React.FC<LogoProps> = ({
+  to,
+  imgLogoSrc,
+  sx,
+}: LogoProps) => {
   return (
     <Box
       sx={{
-        display: 'flex',       // Para garantir que o Link e a imagem estejam alinhados
-        alignItems: 'center',  // Centraliza verticalmente o conteúdo (se houver texto)
+        display: 'flex', // Para garantir que o Link e a imagem estejam alinhados
+        alignItems: 'center', // Centraliza verticalmente o conteúdo (se houver texto)
         // Se houver um tamanho fixo para o container do logo:
         // width: 'auto',
         // height: 'auto',
@@ -32,9 +37,9 @@ export const Logo: React.FC<LogoProps> = ({ to, imgLogoSrc }: LogoProps) => {
           src={imgLogoSrc}
           alt="Logo"
           sx={{
-            height: '40px',
-            width: 'auto', 
+            width: 'auto',
             display: 'block',
+            ...sx,
           }}
         />
       </StyledLink>

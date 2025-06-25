@@ -52,7 +52,7 @@ describe('FormRastreamento', () => {
     Cademb_nome: 'Fulano de Tal',
     palcai_qtd: '2',
     palcai_peso: '20',
-    codcaixa: '000000000000',
+    palcai_codigo: '000000000000',
   };
 
   let consoleErrorSpy: vi.SpyInstance;
@@ -139,7 +139,9 @@ describe('FormRastreamento', () => {
     await userEvent.click(screen.getByRole('button', { name: /enviar/i }));
 
     await waitFor(() => {
-      expect(screen.getByText(/falha na busca: falha na api/i)).toBeInTheDocument();
+      expect(
+        screen.getByText(/falha na busca: falha na api/i)
+      ).toBeInTheDocument();
     });
   });
 
@@ -158,11 +160,17 @@ describe('FormRastreamento', () => {
         formState: { errors: {}, isSubmitting: true },
       }),
       useFormContext: () => ({ control: {} }),
-      Controller: ({ render }: any) => render({ field: { onChange: vi.fn(), value: '' }, fieldState: { invalid: false } }),
+      Controller: ({ render }: any) =>
+        render({
+          field: { onChange: vi.fn(), value: '' },
+          fieldState: { invalid: false },
+        }),
     }));
 
     render(<FormRastreamento />);
-    const inputElement = screen.getByLabelText(/código/i).querySelector('input')!;
+    const inputElement = screen
+      .getByLabelText(/código/i)
+      .querySelector('input')!;
     const submitButton = screen.getByRole('button', { name: /enviar/i });
 
     await userEvent.type(inputElement, '000-000.000.000');
@@ -185,7 +193,9 @@ describe('FormRastreamento', () => {
     });
 
     render(<FormRastreamento />);
-    const inputElement = screen.getByLabelText(/código/i).querySelector('input')!;
+    const inputElement = screen
+      .getByLabelText(/código/i)
+      .querySelector('input')!;
 
     await userEvent.type(inputElement, '000-000.000.000');
     await userEvent.click(screen.getByRole('button', { name: /enviar/i }));
@@ -205,31 +215,43 @@ describe('FormRastreamento', () => {
     await userEvent.click(screen.getByRole('button', { name: /enviar/i }));
 
     await waitFor(() => {
-      expect(screen.queryByText(/detalhes do produto/i)).not.toBeInTheDocument();
-      expect(screen.getByText(/falha na busca: erro 404: produto não encontrado/i)).toBeInTheDocument();
+      expect(
+        screen.queryByText(/detalhes do produto/i)
+      ).not.toBeInTheDocument();
+      expect(
+        screen.getByText(/falha na busca: erro 404: produto não encontrado/i)
+      ).toBeInTheDocument();
     });
   });
 
   it('preenche e submete o formulário com código da URL se formato válido', async () => {
-  (useParams as ReturnType<typeof vi.fn>).mockReturnValue({ codigoNaUrl: '123-456.789.012' });
-  const mockedApi = api.buscarProdutoPorCodigo as ReturnType<typeof vi.fn>;
-  mockedApi.mockResolvedValue({
-    ok: true,
-    json: async () => produtoMock,
-  });
+    (useParams as ReturnType<typeof vi.fn>).mockReturnValue({
+      codigoNaUrl: '123-456.789.012',
+    });
+    const mockedApi = api.buscarProdutoPorCodigo as ReturnType<typeof vi.fn>;
+    mockedApi.mockResolvedValue({
+      ok: true,
+      json: async () => produtoMock,
+    });
 
-  render(<FormRastreamento />);
+    render(<FormRastreamento />);
 
-  await waitFor(() => {
-    const inputElement = screen.getByLabelText(/código/i).querySelector('input')!;
-    expect(inputElement).toHaveValue('123-456.789.012');
-    expect(api.buscarProdutoPorCodigo).toHaveBeenCalledWith('123-456.789.012');
-    expect(screen.getByText(/detalhes do produto/i)).toBeInTheDocument();
+    await waitFor(() => {
+      const inputElement = screen
+        .getByLabelText(/código/i)
+        .querySelector('input')!;
+      expect(inputElement).toHaveValue('123-456.789.012');
+      expect(api.buscarProdutoPorCodigo).toHaveBeenCalledWith(
+        '123-456.789.012'
+      );
+      expect(screen.getByText(/detalhes do produto/i)).toBeInTheDocument();
+    });
   });
-});
 
   it('exibe erro se o código da URL tiver formato inválido', async () => {
-    (useParams as ReturnType<typeof vi.fn>).mockReturnValue({ codigoNaUrl: '123456' });
+    (useParams as ReturnType<typeof vi.fn>).mockReturnValue({
+      codigoNaUrl: '123456',
+    });
     render(<FormRastreamento />);
 
     await waitFor(() => {
