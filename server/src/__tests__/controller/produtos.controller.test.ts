@@ -1,19 +1,36 @@
 import { ProdutoController } from "../../controllers/produtos.controller";
 import { ProdutoService } from "../../services/produtos.service";
 import { Request, Response } from "express";
+import { CaixaPaletizada } from "../../controllers/protocols";
 
-jest.mock("../../src/services/produtos.service");
+jest.mock("../../services/produtos.service");
 
-const mockResponse = () => {
-  const res = {} as Response;
-  res.status = jest.fn().mockReturnThis();
-  res.json = jest.fn().mockReturnThis();
-  return res;
+const mockResponse = (): Response => {
+  const res = {
+    status: jest.fn().mockReturnThis(),
+    json: jest.fn().mockReturnThis(),
+  };
+  return res as unknown as Response;
 };
 
 describe("ProdutoController", () => {
   let controller: ProdutoController;
   let mockService: jest.Mocked<ProdutoService>;
+
+  const mockProdutoMapeado: CaixaPaletizada = {
+    codigoCaixa: "023-000.019.018",
+    nomeProduto: "Mamão Formosa",
+    dataColheita: "2022-08-11T00:00:00.000Z",
+    dataChegada: "2022-08-11T00:00:00.000Z",
+    produtorEmpresa: "Frutas Yang",
+    embalagem: "Caixa Papelao 10kg - Formosa",
+    nomeEmbalador: "DIEGO DE OLIVEIRA MATEUS ",
+    numeroRomaneio: "18708",
+    talhaoRomaneio: "2",
+    endereco: "CORREGO DA CALIFORNIA",
+    cidade: "Caravelas-BA",
+    tamanhoProduto: "Sem Calibre",
+  };
 
   beforeEach(() => {
     mockService = new ProdutoService() as jest.Mocked<ProdutoService>;
@@ -21,96 +38,63 @@ describe("ProdutoController", () => {
     (controller as any).produtoService = mockService;
   });
 
-  it("deve retornar 200 e o produto quando encontrado", async () => {
+  it("deve retornar 200 e o produto MAPEADO quando encontrado", async () => {
     const req = {
       params: { codigo: "023-000.019.018" },
     } as unknown as Request;
     const res = mockResponse();
 
-    mockService.getProdutoByCodigo.mockResolvedValue({
-      fkpalet: 3711,
-      idromaneio: 431,
-      rom_romaneio: "18708",
-      rom_talhao: "2  ",
-      rom_dtcolheita: "2022-08-11T00:00:00.000Z",
-      rom_dtchegada: "2022-08-11T00:00:00.000Z",
-      emp_razaoSocial: "Frutas Yang",
-      fkempresa: 6,
-      endereco: "CORREGO DA CALIFORNIA",
-      cidade: "Caravelas-BA",
-      pro_descricao: "Mamão Formosa",
-      tam_descricao: "Sem Calibre",
-      cai_descricao: "Caixa Papelao 10kg - Formosa",
-      Cademb_nome: "DIEGO DE OLIVEIRA MATEUS ",
-      palcai_qtd: 1,
-      palcai_peso: 8,
-      palcai_codigo: "023000019018",
-    });
+    mockService.getProdutoByCodigo.mockResolvedValue(mockProdutoMapeado);
 
     await controller.getProdutoPorCodigo(req, res);
 
     expect(res.status).toHaveBeenCalledWith(200);
-    expect(res.json).toHaveBeenCalledWith({
-      fkpalet: 3711,
-      idromaneio: 431,
-      rom_romaneio: "18708",
-      rom_talhao: "2  ",
-      rom_dtcolheita: "2022-08-11T00:00:00.000Z",
-      rom_dtchegada: "2022-08-11T00:00:00.000Z",
-      emp_razaoSocial: "Frutas Yang",
-      fkempresa: 6,
-      endereco: "CORREGO DA CALIFORNIA",
-      cidade: "Caravelas-BA",
-      pro_descricao: "Mamão Formosa",
-      tam_descricao: "Sem Calibre",
-      cai_descricao: "Caixa Papelao 10kg - Formosa",
-      Cademb_nome: "DIEGO DE OLIVEIRA MATEUS ",
-      palcai_qtd: 1,
-      palcai_peso: 8,
-      palcai_codigo: "023000019018",
-    });
+    expect(res.json).toHaveBeenCalledWith(mockProdutoMapeado);
   });
 
+  // ##### TESTE CORRIGIDO ABAIXO #####
   it("deve retornar 404 se o produto não for encontrado", async () => {
     const req = {
-      params: { codigo: "023-000.019.000" },
+      // <<< A CORREÇÃO ESTÁ AQUI
+      // Usamos um código com formato válido para passar na primeira validação do Zod.
+      params: { codigo: "999-999.999.999" },
     } as unknown as Request;
     const res = mockResponse();
 
+    // O serviço será chamado com "999999999999" e retornará null, como mockado.
     mockService.getProdutoByCodigo.mockResolvedValue(null);
 
     await controller.getProdutoPorCodigo(req, res);
 
+    // Agora, a validação de formato passa e a lógica de negócio (404) é testada corretamente.
     expect(res.status).toHaveBeenCalledWith(404);
     expect(res.json).toHaveBeenCalledWith({
       message: "Nenhum dado encontrado para o código fornecido.",
     });
   });
 
-  it("deve retornar 400 para parâmetro inválido", async () => {
+  it("deve retornar 400 para parâmetro inválido (Zod)", async () => {
+    // Este teste agora verifica um formato realmente inválido, como um código curto.
     const req = {
-      params: { codigo: "" },
+      params: { codigo: "formato-invalido" },
     } as unknown as Request;
     const res = mockResponse();
-
     await controller.getProdutoPorCodigo(req, res);
-
     expect(res.status).toHaveBeenCalledWith(400);
-    expect(res.json).toHaveBeenCalled();
+    expect(res.json).toHaveBeenCalledWith(
+      expect.objectContaining({
+        error: "Parâmetro inválido",
+      })
+    );
   });
 
   it("deve retornar 500 em caso de erro inesperado", async () => {
-    const req = {
-      params: { codigo: "023-000.019.018" },
-    } as unknown as Request;
+    const req = { params: { codigo: "123-456.789.000" } } as unknown as Request;
     const res = mockResponse();
-
     mockService.getProdutoByCodigo.mockRejectedValue(
       new Error("Falha inesperada")
     );
-
     await controller.getProdutoPorCodigo(req, res);
-
     expect(res.status).toHaveBeenCalledWith(500);
     expect(res.json).toHaveBeenCalledWith({
       error: "Erro ao buscar Produtos.",
