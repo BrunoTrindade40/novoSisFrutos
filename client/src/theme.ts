@@ -13,7 +13,7 @@ const theme = createTheme({
     },
     background: {
       default: '#f5f5f5', // Fundo levemente cinza para o body/html
-      paper: '#ffffff', // Fundo branco para cards/caixas de conteúdo
+      paper: '#f7f2e9', // Fundo branco para cards/caixas de conteúdo
     },
     text: {
       primary: '#003B49',

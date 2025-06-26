@@ -1,10 +1,6 @@
-// Home.tsx - VERSÃO FINAL COM SCROLL AUTOMÁTICO
-
-// 1. IMPORTAR OS HOOKS NECESSÁRIOS
 import React, { useState, useEffect, useRef } from 'react';
-import { useNavigate, useParams } from 'react-router-dom';
+import { useParams } from 'react-router-dom';
 
-// Importando componentes de layout, tema e os hooks do MUI
 import {
   ThemeProvider,
   CssBaseline,
@@ -12,6 +8,7 @@ import {
   Container,
   useTheme,
   useMediaQuery,
+  Toolbar,
 } from '@mui/material';
 import theme from '../theme';
 import { Header } from '../components/Header/Header';
@@ -19,13 +16,9 @@ import { Footer } from '../components/Footer/Footer';
 
 // ... resto das suas importações ...
 import { TextoRastreamentoDeFrutos } from '../components/conteudos/Textos/TextoRastreamentoDeFrutos';
-import {
-  FormRastreamento,
-  type FormValues,
-} from '../components/conteudos/Formularios/FormRastreamento';
+import { FormRastreamento } from '../components/conteudos/Formularios/FormRastreamento';
 import { ProdutoDetalhes } from '../components/Produtos/ProdutoDetalhes';
 import { MensagemErro } from '../components/conteudos/Formularios/MensagemErro';
-import { buscarProdutoPorCodigo } from '../services/api';
 import type { Produto } from '../types/Produto';
 
 const Home: React.FC = () => {
@@ -34,7 +27,6 @@ const Home: React.FC = () => {
   const [loading, setLoading] = useState(false);
 
   const { codigoNaUrl } = useParams<{ codigoNaUrl?: string }>();
-  const navigate = useNavigate();
 
   // 2. CRIAR A REFERÊNCIA E VERIFICAR O TAMANHO DA TELA
   const formRef = useRef<HTMLDivElement>(null); // Âncora para o nosso formulário
@@ -52,14 +44,10 @@ const Home: React.FC = () => {
 
   // 4. CRIAR O EFEITO DE ROLAGEM
   useEffect(() => {
-    // A rolagem só acontece se:
-    // - Um produto foi encontrado com sucesso (produto não é nulo)
-    // - Estamos em uma visualização mobile (isMobile é true)
     if (produto && isMobile) {
-      // O '?.scrollIntoView' rola a página suavemente até o elemento referenciado
       formRef.current?.scrollIntoView({ behavior: 'smooth', block: 'start' });
     }
-  }, [produto, isMobile]); // Este efeito roda sempre que 'produto' ou 'isMobile' mudar
+  }, [produto, isMobile]);
 
   return (
     <ThemeProvider theme={theme}>
@@ -68,6 +56,7 @@ const Home: React.FC = () => {
         sx={{ display: 'flex', flexDirection: 'column', minHeight: '100vh' }}
       >
         <Header />
+        <Toolbar /> {/* Ajuste técnico */}
         <Container component="main" sx={{ flexGrow: 1, my: 4 }}>
           <Box
             sx={{
@@ -82,7 +71,13 @@ const Home: React.FC = () => {
             </Box>
 
             {/* 3. ANEXAR A REFERÊNCIA AO CONTAINER DO FORMULÁRIO */}
-            <Box ref={formRef} sx={{ width: { xs: '100%', md: '41.67%' } }}>
+            <Box
+              ref={formRef}
+              sx={{
+                width: { xs: '100%', md: '41.67%' },
+                pt: { xs: 10, md: 0 } /* Ajuste técnico  */,
+              }}
+            >
               <FormRastreamento
                 onSearchResult={handleSearchResult}
                 isLoading={loading}

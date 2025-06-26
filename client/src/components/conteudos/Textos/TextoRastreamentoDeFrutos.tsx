@@ -1,10 +1,8 @@
-// TextoRastreamentoDeFrutos.tsx - VERSÃO FINAL COM FLEXBOX
-
 import { Typography, Box, List, ListItem, ListItemText } from '@mui/material';
 import imgTexto from '../../../assets/images/imagem-texto-rastreabilidade2.jpg';
 
+// O array 'etapas' não precisa de alterações.
 const etapas = [
-  // ... seus dados das etapas ...
   {
     titulo: 'Colheita Controlada',
     descricao:
@@ -25,55 +23,51 @@ const etapas = [
 export function TextoRastreamentoDeFrutos() {
   return (
     <Box>
-      {/* 1. CONTAINER FLEXBOX PARA IMAGEM E TEXTO INICIAL */}
+      {/* 1. IMAGEM COM FLOAT */}
+      {/* A imagem agora flutua à esquerda, permitindo que o texto a envolva. */}
       <Box
+        component="img"
+        src={imgTexto}
+        alt="Rastreabilidade de Frutos: Produtor, Distribuidor, Consumidor"
         sx={{
-          display: 'flex',
-          // Em telas pequenas (xs) fica em coluna, em maiores (sm) fica em linha
-          flexDirection: { xs: 'column', sm: 'row' },
-          alignItems: 'center', // Alinha verticalmente para um bom visual
-          gap: 3, // Espaçamento entre a imagem e o texto
-          mb: 4, // Margem inferior para afastar do conteúdo seguinte
+          // A propriedade 'float' é a chave aqui
+          float: 'left',
+          // Use margens para criar espaçamento, substituindo o 'gap' do flexbox
+          mr: 3, // margin-right
+          mb: 1.5, // margin-bottom
+          // Mantém seus estilos responsivos e de imagem
+          width: { xs: '40%', sm: 220 },
+          height: 'auto',
+          borderRadius: '8px',
         }}
-      >
-        {/* 2. ITEM DO FLEXBOX: A IMAGEM */}
-        <Box
-          component="img"
-          src={imgTexto}
-          alt="Rastreabilidade de Frutos: Produtor, Distribuidor, Consumidor"
-          sx={{
-            // Define uma largura e impede que a imagem seja esmagada
-            width: { xs: '80%', sm: 220 },
-            flexShrink: 0,
-            height: 'auto',
-            borderRadius: '8px',
-          }}
-        />
+      />
 
-        {/* 3. ITEM DO FLEXBOX: O TEXTO INICIAL */}
-        <Box>
-          <Typography variant="body1" sx={{ textAlign: 'justify' }}>
-            A rastreabilidade garante o acompanhamento completo do percurso do
-            fruto — desde a colheita no pomar até a mesa do consumidor. Esse
-            processo vem ganhando destaque por permitir que produtores,
-            embaladores e distribuidores estejam preparados para agir
-            rapidamente diante de qualquer eventualidade, além de oferecer ao
-            consumidor informações sobre a
-            <span style={{ fontWeight: 'bold' }}> origem </span>e
-            <span style={{ fontWeight: 'bold' }}> qualidade do fruto </span>
-            consumido.
-          </Typography>
-        </Box>
-      </Box>
-
-      {/* O restante do conteúdo flui normalmente abaixo do Flexbox */}
-      <Typography variant="body1" sx={{ mb: 2, textAlign: 'justify' }}>
-        Nossa metodologia de rastreabilidade utiliza tecnologia de ponta e está
-        dividida em
-        <span style={{ fontWeight: 'bold' }}> três etapas principais</span>:
+      {/* 2. TEXTO QUE IRÁ FLUTUAR AO REDOR DA IMAGEM */}
+      {/* Note que os parágrafos de texto estão agora como "irmãos" da imagem,
+          não dentro de um container flex separado. */}
+      <Typography variant="body1" sx={{ textAlign: 'justify', mb: 2 }}>
+        A rastreabilidade garante o acompanhamento completo do percurso do fruto
+        — desde a colheita no pomar até a mesa do consumidor. Esse processo vem
+        ganhando destaque por permitir que produtores, embaladores e
+        distribuidores estejam preparados para agir rapidamente diante de
+        qualquer eventualidade, além de oferecer ao consumidor informações sobre
+        a <span style={{ fontWeight: 'bold' }}>origem</span> e{' '}
+        <span style={{ fontWeight: 'bold' }}>qualidade do fruto</span>{' '}
+        consumido.
       </Typography>
 
-      <List sx={{ mt: 3, width: '100%' }}>
+      <Typography variant="body1" sx={{ mb: 4, textAlign: 'justify' }}>
+        Nossa metodologia de rastreabilidade utiliza tecnologia de ponta e está
+        dividida em{' '}
+        <span style={{ fontWeight: 'bold' }}>três etapas principais</span>:
+      </Typography>
+
+      {/* 3. CONTEÚDO RESTANTE */}
+      {/* O conteúdo a seguir (a lista e o parágrafo final) fluirá normalmente.
+          Como a lista é um elemento de bloco, ela começará abaixo do conteúdo anterior.
+          Se o texto que a precede for curto e não ultrapassar a altura da imagem,
+          a lista começará abaixo da imagem também, o que é o comportamento correto. */}
+      <List sx={{ width: '100%' }}>
         {etapas.map((etapa, index) => (
           <ListItem
             key={index}
@@ -107,7 +101,7 @@ export function TextoRastreamentoDeFrutos() {
 
       <Typography variant="body1" sx={{ mt: 2, textAlign: 'justify' }}>
         Todos os dados são disponibilizados em tempo real para consumidores,
-        produtores ou distribuidores por meio de
+        produtores ou distribuidores por meio de{' '}
         <span style={{ fontWeight: 'bold' }}> QR Code </span>ou diretamente pela{' '}
         <span style={{ fontWeight: 'bold' }}>página web</span>. Essa solução
         oferece

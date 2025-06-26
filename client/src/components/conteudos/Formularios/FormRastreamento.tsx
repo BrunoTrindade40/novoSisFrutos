@@ -124,6 +124,7 @@ export function FormRastreamento({
           variant="contained"
           color="secondary"
           disabled={isLoading} // 5. O botão também usa a prop 'isLoading'
+          aria-label="Enviar"
           sx={{ color: 'white', flexShrink: 0 }}
         >
           {isLoading ? (

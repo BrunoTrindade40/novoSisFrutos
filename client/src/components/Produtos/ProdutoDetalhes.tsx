@@ -1,5 +1,6 @@
 import { Box, Typography, Paper, Divider } from '@mui/material'; // Adicionar Typography e Paper
 import type { Produto } from '../../types/Produto';
+import imgTexto from '../../assets/images/imagem-texto-rastreabilidade2.jpg';
 
 interface Props {
   produto: Produto;
@@ -17,10 +18,31 @@ export function ProdutoDetalhes({ produto }: Props) {
         boxShadow: 3,
       }}
     >
-      <Box sx={{ display: 'flex', justifyContent: 'center', mb: 3 }}>
+      <Box
+        sx={{
+          display: 'flex',
+          justifyContent: 'space-between',
+          mb: 3,
+          position: 'relative',
+        }}
+      >
         <Typography variant="h5" component="h2" sx={{ fontWeight: 'bold' }}>
           Detalhes do Produto
         </Typography>
+        <Box
+          component="img"
+          src={imgTexto}
+          alt="Rastreabilidade de Frutos: Produtor, Distribuidor, Consumidor"
+          sx={{
+            position: 'absolute',
+            right: 0,
+            mr: 0.5, // margin-right
+            mb: 1.5, // margin-bottom
+            width: 60,
+            height: 'auto',
+            borderRadius: '8px',
+          }}
+        />
       </Box>
 
       <Box

@@ -6,23 +6,28 @@ import imgLogo2 from '../../assets/images/logo ok_transparente.svg';
 
 export const Header: React.FC = () => {
   return (
+    // 1. Mude a posição para "fixed" para garantir que ele fique fixo no topo da janela.
+    //    Adicione top: 0 e left: 0 para garantir o posicionamento.
     <AppBar
-      position="static"
+      position="fixed"
       sx={{
         backgroundColor: 'primary.main',
         boxShadow: 'none',
+        top: 0,
+        left: 0,
       }}
     >
-      {/* Usa a cor primária do tema e remove a sombra padrão */}
+      {/* 2. Mova o Container para DENTRO do AppBar. */}
+      {/* Agora, o fundo do AppBar ocupará 100% da largura,
+          mas o conteúdo (Toolbar) respeitará o maxWidth. */}
       <Container maxWidth="md">
         <Toolbar
+          disableGutters // Remove os paddings padrão do Toolbar, pois o Container já controla isso.
           sx={{
             justifyContent: 'space-between',
-            paddingLeft: '16px',
-            paddingRight: '16px',
           }}
         >
-          {/* Ajusta o espaçamento e alinhamento */}
+          {/* O restante do seu código continua aqui dentro do Toolbar */}
           <Logo
             to="/"
             imgLogoSrc={imgLogo}
@@ -48,7 +53,6 @@ export const Header: React.FC = () => {
                   fontSize: { xs: '2rem', sm: '2.5rem' },
                 }}
               >
-                {/* Usando Typography para h2 */}
                 Sisfrutos
               </Typography>
               <Typography
@@ -61,7 +65,6 @@ export const Header: React.FC = () => {
                   fontSize: { xs: '1.5rem', sm: '1.8rem' },
                 }}
               >
-                {/* Usando Typography para o span */}
                 Rastreabilidade
               </Typography>
             </Box>

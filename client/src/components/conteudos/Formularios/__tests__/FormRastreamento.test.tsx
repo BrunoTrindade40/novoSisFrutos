@@ -1,261 +1,218 @@
 import { render, screen, waitFor } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
-import { vi, type SpyInstance } from 'vitest';
-import { useParams } from 'react-router-dom';
+import { vi } from 'vitest';
+import { MemoryRouter, Route, Routes } from 'react-router-dom';
 import { FormRastreamento } from '../FormRastreamento';
 import * as api from '../../../../services/api';
 import type { Produto } from '../../../../types/Produto';
 
-// Mock da API
 vi.mock('../../../../services/api', () => ({
   buscarProdutoPorCodigo: vi.fn(),
 }));
 
-// Mock do useParams do react-router-dom
-vi.mock('react-router-dom', () => ({
-  ...vi.importActual('react-router-dom'),
-  useParams: vi.fn(),
-}));
+const produtoMock: Produto = {
+  codigoCaixa: '000-000.000.000',
+  nomeProduto: 'Produto Teste',
+  dataColheita: '2024-01-01T00:00:00.000Z',
+  dataChegada: '2024-01-01T00:00:00.000Z',
+  produtorEmpresa: 'Empresa Teste',
+  nomeEmbalador: 'Fulano de Tal',
+  embalagem: 'Caixa 10kg',
+  numeroRomaneio: '12345',
+  talhaoRomaneio: '1',
+  endereco: 'Rua Teste',
+  cidade: 'Cidade Teste',
+  tamanhoProduto: 'Grande',
+};
 
-// Mock do FormInput
-vi.mock('./FormInput', () => ({
-  FormInput: vi.fn(({ control, name, ariaLabel, placeholder, loading }) => {
-    const { field } = control.register(name);
-    return (
-      <input
-        aria-label={ariaLabel}
-        placeholder={placeholder}
-        name={name}
-        value={field.value || ''}
-        onChange={field.onChange}
-        disabled={loading}
-      />
-    );
-  }),
-}));
+// *** INÍCIO DA CORREÇÃO ***
+// Helper atualizado para conhecer todas as rotas relevantes.
+const renderComponent = (
+  props: { isLoading?: boolean; initialCodigo?: string } = {},
+  initialPath = '/'
+) => {
+  const onSearchResultMock = vi.fn();
+  const { isLoading = false, initialCodigo } = props;
+
+  render(
+    <MemoryRouter initialEntries={[initialPath]}>
+      <Routes>
+        {/* Rota para a raiz */}
+        <Route
+          path="/"
+          element={
+            <FormRastreamento
+              onSearchResult={onSearchResultMock}
+              isLoading={isLoading}
+              initialCodigo={initialCodigo}
+            />
+          }
+        />
+        {/* Rota para o caminho com o código */}
+        <Route
+          path="/rastrear/:codigoNaUrl"
+          element={
+            <FormRastreamento
+              onSearchResult={onSearchResultMock}
+              isLoading={isLoading}
+              initialCodigo={initialCodigo}
+            />
+          }
+        />
+      </Routes>
+    </MemoryRouter>
+  );
+
+  return { onSearchResultMock };
+};
+// *** FIM DA CORREÇÃO ***
 
 describe('FormRastreamento', () => {
-  const produtoMock: Produto = {
-    fkpalet: 1,
-    idromaneio: 1,
-    rom_romaneio: '12345',
-    rom_talhao: '1',
-    rom_dtcolheita: '2024-01-01T00:00:00.000Z',
-    rom_dtchegada: '2024-01-01T00:00:00.000Z',
-    emp_razaoSocial: 'Empresa Teste',
-    fkempresa: 10,
-    endereco: 'Rua Teste',
-    cidade: 'Cidade Teste',
-    pro_descricao: 'Produto Teste',
-    tam_descricao: 'Grande',
-    cai_descricao: 'Caixa 10kg',
-    Cademb_nome: 'Fulano de Tal',
-    palcai_qtd: '2',
-    palcai_peso: '20',
-    palcai_codigo: '000000000000',
-  };
-
-  let consoleErrorSpy: vi.SpyInstance;
+  const mockedApi = api.buscarProdutoPorCodigo as ReturnType<typeof vi.fn>;
 
   beforeEach(() => {
     vi.clearAllMocks();
-    consoleErrorSpy = vi.spyOn(console, 'error').mockImplementation(() => {});
-  });
-
-  afterEach(() => {
-    consoleErrorSpy.mockRestore();
   });
 
   it('renderiza o formulário corretamente', () => {
-    (useParams as ReturnType<typeof vi.fn>).mockReturnValue({});
-    render(<FormRastreamento />);
-    expect(screen.getByLabelText(/código/i)).toBeInTheDocument();
+    renderComponent();
+    expect(
+      screen.getByRole('textbox', { name: /código/i })
+    ).toBeInTheDocument();
     expect(screen.getByRole('button', { name: /enviar/i })).toBeInTheDocument();
   });
 
-  it('exibe erro se o campo for enviado vazio', async () => {
-    (useParams as ReturnType<typeof vi.fn>).mockReturnValue({});
-    render(<FormRastreamento />);
+  it('exibe erro de validação se o campo for enviado vazio', async () => {
+    renderComponent();
     await userEvent.click(screen.getByRole('button', { name: /enviar/i }));
     await waitFor(() => {
       expect(screen.getByText('Campo obrigatório')).toBeInTheDocument();
     });
   });
 
-  it('exibe erro se o formato do código for inválido', async () => {
-    (useParams as ReturnType<typeof vi.fn>).mockReturnValue({});
-    render(<FormRastreamento />);
-    await userEvent.type(screen.getByLabelText(/código/i), '123456');
+  it('exibe erro de validação se o formato do código for inválido', async () => {
+    renderComponent();
+    await userEvent.type(
+      screen.getByRole('textbox', { name: /código/i }),
+      '123456'
+    );
     await userEvent.click(screen.getByRole('button', { name: /enviar/i }));
-
     await waitFor(() => {
       expect(screen.getByText(/formato inválido/i)).toBeInTheDocument();
     });
   });
 
-  it('exibe os detalhes do produto quando a busca for bem-sucedida', async () => {
-    (useParams as ReturnType<typeof vi.fn>).mockReturnValue({});
-    const mockedApi = api.buscarProdutoPorCodigo as ReturnType<typeof vi.fn>;
-    mockedApi.mockResolvedValue({
-      ok: true,
-      json: async () => produtoMock,
-    });
+  it('chama onSearchResult com os dados do produto em caso de sucesso', async () => {
+    mockedApi.mockResolvedValue({ ok: true, json: async () => produtoMock });
+    // Ajuste na chamada para ser mais explícito
+    const { onSearchResultMock } = renderComponent({}, '/');
 
-    render(<FormRastreamento />);
-    await userEvent.type(screen.getByLabelText(/código/i), '000-000.000.000');
+    await userEvent.type(
+      screen.getByRole('textbox', { name: /código/i }),
+      '000-000.000.000'
+    );
     await userEvent.click(screen.getByRole('button', { name: /enviar/i }));
 
     await waitFor(() => {
-      expect(screen.getByText(/detalhes do produto/i)).toBeInTheDocument();
-      expect(screen.getByText(/produto teste/i)).toBeInTheDocument();
       expect(mockedApi).toHaveBeenCalledWith('000-000.000.000');
+      expect(onSearchResultMock).toHaveBeenCalledWith({
+        produto: produtoMock,
+        erro: null,
+      });
     });
   });
 
-  it('exibe mensagem de erro quando o produto não é encontrado', async () => {
-    (useParams as ReturnType<typeof vi.fn>).mockReturnValue({});
-    const mockedApi = api.buscarProdutoPorCodigo as ReturnType<typeof vi.fn>;
-    mockedApi.mockResolvedValue({
-      ok: true,
-      json: async () => null,
+  it('chama onSearchResult com erro quando o produto não é encontrado', async () => {
+    mockedApi.mockResolvedValue({ ok: true, json: async () => null });
+    const { onSearchResultMock } = renderComponent();
+    await userEvent.type(
+      screen.getByRole('textbox', { name: /código/i }),
+      '111-111.111.111'
+    );
+    await userEvent.click(screen.getByRole('button', { name: /enviar/i }));
+    await waitFor(() => {
+      expect(onSearchResultMock).toHaveBeenCalledWith({
+        produto: null,
+        erro: 'Produto não encontrado para o código informado.',
+      });
     });
+  });
 
-    render(<FormRastreamento />);
-    await userEvent.type(screen.getByLabelText(/código/i), '000-000.000.000');
+  it('chama onSearchResult com erro ao falhar a requisição da API', async () => {
+    mockedApi.mockRejectedValue(new Error('Falha na rede'));
+    const { onSearchResultMock } = renderComponent();
+    await userEvent.type(
+      screen.getByRole('textbox', { name: /código/i }),
+      '222-222.222.222'
+    );
+    await userEvent.click(screen.getByRole('button', { name: /enviar/i }));
+    await waitFor(() => {
+      expect(onSearchResultMock).toHaveBeenCalledWith({
+        produto: null,
+        erro: 'Falha na rede',
+      });
+    });
+  });
+
+  it('chama onSearchResult para limpar o estado antes de cada busca', async () => {
+    mockedApi.mockResolvedValue({ ok: true, json: async () => produtoMock });
+    // Ajuste na chamada para ser mais explícito
+    const { onSearchResultMock } = renderComponent({}, '/');
+
+    await userEvent.type(
+      screen.getByRole('textbox', { name: /código/i }),
+      '000-000.000.000'
+    );
     await userEvent.click(screen.getByRole('button', { name: /enviar/i }));
 
     await waitFor(() => {
-      expect(screen.getByText(/produto não encontrado/i)).toBeInTheDocument();
+      expect(onSearchResultMock).toHaveBeenCalledTimes(2);
+      expect(onSearchResultMock).toHaveBeenCalledWith({
+        produto: null,
+        erro: null,
+      });
+      expect(onSearchResultMock).toHaveBeenCalledWith({
+        produto: produtoMock,
+        erro: null,
+      });
     });
   });
 
-  it('exibe mensagem de erro ao falhar a requisição', async () => {
-    (useParams as ReturnType<typeof vi.fn>).mockReturnValue({});
-    const mockedApi = api.buscarProdutoPorCodigo as ReturnType<typeof vi.fn>;
-    mockedApi.mockRejectedValue(new Error('Falha na API'));
+  it('desabilita o formulário e exibe o spinner quando isLoading é true', () => {
+    renderComponent({ isLoading: true });
+    expect(screen.getByRole('progressbar')).toBeInTheDocument();
+    expect(screen.getByRole('textbox', { name: /código/i })).toBeDisabled();
+    expect(screen.getByRole('button', { name: /enviar/i })).toBeDisabled();
+  });
 
-    render(<FormRastreamento />);
-    await userEvent.type(screen.getByLabelText(/código/i), '000-000.000.000');
-    await userEvent.click(screen.getByRole('button', { name: /enviar/i }));
+  it('preenche e submete o formulário com código da URL se o formato for válido', async () => {
+    mockedApi.mockResolvedValue({ ok: true, json: async () => produtoMock });
+    const codigo = '123-456.789.012';
+    // Ajuste na chamada para usar a nova assinatura do helper
+    const { onSearchResultMock } = renderComponent(
+      { initialCodigo: codigo },
+      `/rastrear/${codigo}`
+    );
 
     await waitFor(() => {
-      expect(
-        screen.getByText(/falha na busca: falha na api/i)
-      ).toBeInTheDocument();
+      expect(mockedApi).toHaveBeenCalledWith(codigo);
+      expect(onSearchResultMock).toHaveBeenCalledWith({
+        produto: produtoMock,
+        erro: null,
+      });
     });
   });
 
-  it('exibe loading e desabilita o campo durante a busca', async () => {
-    (useParams as ReturnType<typeof vi.fn>).mockReturnValue({});
-    const mockedApi = api.buscarProdutoPorCodigo as ReturnType<typeof vi.fn>;
-    mockedApi.mockReturnValue(new Promise(() => {})); // Nunca resolve
+  it('NÃO submete o formulário se o código da URL tiver formato inválido', async () => {
+    const codigo = '12345';
+    // Ajuste na chamada
+    const { onSearchResultMock } = renderComponent(
+      { initialCodigo: codigo },
+      `/rastrear/${codigo}`
+    );
 
-    vi.doMock('react-hook-form', () => ({
-      useForm: () => ({
-        register: vi.fn(),
-        handleSubmit: vi.fn(),
-        setValue: vi.fn(),
-        reset: vi.fn(),
-        control: {},
-        formState: { errors: {}, isSubmitting: true },
-      }),
-      useFormContext: () => ({ control: {} }),
-      Controller: ({ render }: any) =>
-        render({
-          field: { onChange: vi.fn(), value: '' },
-          fieldState: { invalid: false },
-        }),
-    }));
-
-    render(<FormRastreamento />);
-    const inputElement = screen
-      .getByLabelText(/código/i)
-      .querySelector('input')!;
-    const submitButton = screen.getByRole('button', { name: /enviar/i });
-
-    await userEvent.type(inputElement, '000-000.000.000');
-    await userEvent.click(submitButton);
-
-    await waitFor(() => {
-      expect(screen.getByRole('progressbar')).toBeInTheDocument();
-      expect(inputElement).toHaveAttribute('disabled');
-      expect(submitButton).toBeDisabled();
-    });
-  });
-
-  it('limpa o produto e o erro ao iniciar nova busca', async () => {
-    (useParams as ReturnType<typeof vi.fn>).mockReturnValue({});
-    const mockedApi = api.buscarProdutoPorCodigo as ReturnType<typeof vi.fn>;
-
-    mockedApi.mockResolvedValueOnce({
-      ok: true,
-      json: async () => produtoMock,
-    });
-
-    render(<FormRastreamento />);
-    const inputElement = screen
-      .getByLabelText(/código/i)
-      .querySelector('input')!;
-
-    await userEvent.type(inputElement, '000-000.000.000');
-    await userEvent.click(screen.getByRole('button', { name: /enviar/i }));
-
-    await waitFor(() => {
-      expect(screen.getByText(/detalhes do produto/i)).toBeInTheDocument();
-    });
-
-    mockedApi.mockResolvedValueOnce({
-      ok: false,
-      status: 404,
-      text: async () => 'Produto não encontrado',
-    });
-
-    await userEvent.clear(inputElement);
-    await userEvent.type(inputElement, '111-111.111.111');
-    await userEvent.click(screen.getByRole('button', { name: /enviar/i }));
-
-    await waitFor(() => {
-      expect(
-        screen.queryByText(/detalhes do produto/i)
-      ).not.toBeInTheDocument();
-      expect(
-        screen.getByText(/falha na busca: erro 404: produto não encontrado/i)
-      ).toBeInTheDocument();
-    });
-  });
-
-  it('preenche e submete o formulário com código da URL se formato válido', async () => {
-    (useParams as ReturnType<typeof vi.fn>).mockReturnValue({
-      codigoNaUrl: '123-456.789.012',
-    });
-    const mockedApi = api.buscarProdutoPorCodigo as ReturnType<typeof vi.fn>;
-    mockedApi.mockResolvedValue({
-      ok: true,
-      json: async () => produtoMock,
-    });
-
-    render(<FormRastreamento />);
-
-    await waitFor(() => {
-      const inputElement = screen
-        .getByLabelText(/código/i)
-        .querySelector('input')!;
-      expect(inputElement).toHaveValue('123-456.789.012');
-      expect(api.buscarProdutoPorCodigo).toHaveBeenCalledWith(
-        '123-456.789.012'
-      );
-      expect(screen.getByText(/detalhes do produto/i)).toBeInTheDocument();
-    });
-  });
-
-  it('exibe erro se o código da URL tiver formato inválido', async () => {
-    (useParams as ReturnType<typeof vi.fn>).mockReturnValue({
-      codigoNaUrl: '123456',
-    });
-    render(<FormRastreamento />);
-
-    await waitFor(() => {
-      expect(screen.getByText(/formato inválido/i)).toBeInTheDocument();
-    });
+    await new Promise((r) => setTimeout(r, 100));
+    expect(mockedApi).not.toHaveBeenCalled();
+    expect(onSearchResultMock).not.toHaveBeenCalled();
   });
 });
