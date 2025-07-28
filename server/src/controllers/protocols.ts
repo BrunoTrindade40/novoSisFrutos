@@ -33,3 +33,30 @@ export interface CaixaPaletizada {
   cidade: string;
   tamanhoProduto: string;
 }
+
+export interface CaixasEmbaladaMobileResult {
+  fkromaneio: number;
+  rom_romaneio: string;
+  rom_dtchegada: string;
+  emp_razaoSocial: string;
+  endereco: string;
+  cidade: string;
+  pro_descricao: string;
+  CaiEmb_CodCaixa: string;
+  embalador: string;
+  caiemb_status: number;
+}
+export interface CaixaEmbalada {
+  codigoCaixa: string;
+  nomeProduto: string;
+  dataColheita: string | Date;
+  dataChegada: string | Date;
+  produtorEmpresa: string;
+  nomeEmbalador: string;
+  embalagem: string;
+  numeroRomaneio: string;
+  talhaoRomaneio: string;
+  endereco: string;
+  cidade: string;
+  tamanhoProduto: string;
+}

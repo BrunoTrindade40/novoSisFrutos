@@ -10,7 +10,7 @@ export function toCaixaPaletizada(
     codigoCaixa: dbResult.palcai_codigo,
     nomeProduto: dbResult.pro_descricao,
     dataColheita: dbResult.rom_dtcolheita,
-    dataChegada: dbResult.rom_dtchegada,
+    dataChegada: dbResult.rom_dtchegada || dbResult.rom_dtcolheita,
     produtorEmpresa: dbResult.emp_razaoSocial,
     embalagem: dbResult.cai_descricao,
     nomeEmbalador: dbResult.Cademb_nome,

@@ -1,4 +1,4 @@
-import React, { useEffect, useRef } from 'react'; // Removido useState daqui
+import { useEffect, useRef } from 'react'; // Removido useState daqui
 import { useNavigate, useParams } from 'react-router-dom';
 import { Paper, Button, CircularProgress } from '@mui/material';
 import { useForm, type SubmitHandler, type Control } from 'react-hook-form';

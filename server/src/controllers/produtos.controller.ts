@@ -23,10 +23,14 @@ export class ProdutoController {
         return res.status(400).json({ error: "Código é obrigatório." });
       }
 
-      const produto = await this.produtoService.getProdutoByCodigo(codigo);
+      /* const produto = await this.produtoService.getProdutoByCodigo(codigo); */
+      const produto =
+        await this.produtoService.getProdutoByCodigo_CaiEmbalagem(codigo);
 
       if (!produto) {
-        return res.status(404).json({ message: "Nenhum dado encontrado para o código fornecido." });
+        return res
+          .status(404)
+          .json({ message: "Nenhum dado encontrado para o código fornecido." });
       }
 
       return res.status(200).json(produto);

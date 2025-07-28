@@ -1,13 +1,35 @@
+# Dependências
 node_modules
 
-.env
-
-prisma/.cache
-generated
-
+# Arquivos de Build e Artefatos
+dist/
+dist-obfuscated/
 coverage/
 jest-cache/
 
-dist/
-dist-obfuscated/
+# Arquivos de Log
+*.log
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+
+# Variáveis de Ambiente
+# Ignore o arquivo .env principal e QUALQUER arquivo .local.
+# Isso permite que .env.development, .env.test etc., que são templates, sejam commitados.
+.env
+.env*
+
+# Arquivos de Sistema Operacional / IDE
+.DS_Store
+.vscode/
+.idea/
+
+# Arquivos do Prisma
+/prisma/generated/client
+prisma/.cache
+
+# Arquivos específicos do seu projeto
 obfuscate.js
+
+# ... outros ...
+src/config/production.config.ts

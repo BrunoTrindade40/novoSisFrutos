@@ -24,7 +24,7 @@ import type { Produto } from '../types/Produto';
 const Home: React.FC = () => {
   const [produto, setProduto] = useState<Produto | null>(null);
   const [erro, setErro] = useState<string | null>(null);
-  const [loading, setLoading] = useState(false);
+  const [loading] = useState(false);
 
   const { codigoNaUrl } = useParams<{ codigoNaUrl?: string }>();
 
