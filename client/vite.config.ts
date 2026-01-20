@@ -4,7 +4,7 @@ import { configDefaults } from 'vitest/config';
 
 export default defineConfig({
   plugins: [react()],
-  
+
   build: {
     chunkSizeWarningLimit: 1000, // Aumenta limite de aviso para 1MB
 
@@ -21,7 +21,10 @@ export default defineConfig({
 
   server: {
     proxy: {
-      '/api': 'http://localhost:3000',
+      '/api': {
+        target: 'http://localhost:3000', // URL do seu servidor Express
+        changeOrigin: true,
+      },
     },
   },
 

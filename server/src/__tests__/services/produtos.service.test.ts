@@ -1,93 +1,77 @@
-import { ProdutoService } from "../../services/produtos.service";
+import { describe, it, expect, beforeEach, vi } from "vitest";
+import { ProdutosService } from "../../services/produtos.service";
 import { prisma } from "../../prisma/client";
-// Importa os novos tipos e mappers
-import { CaixasEmbaladaMobileResult } from "../../models/caixas";
-import { toCaixaEmbalada } from "../../mappers/caixaEmbalada";
-import { CaixaEmbalada } from "../../controllers/protocols";
 
-jest.mock("../../prisma/client", () => ({
+// Mock do módulo Prisma Client
+vi.mock("../../prisma/client", () => ({
   prisma: {
-    $queryRaw: jest.fn(),
+    $queryRaw: vi.fn(),
   },
 }));
 
-// Mock do novo mapper
-jest.mock("../../mappers/caixaEmbalada");
+// Interface local para simular o retorno cru do banco (Stored Procedure)
+interface CaixaResultDB {
+  id: number;
+  codbarrastag: string;
+  produto: string;
+  datacolheita: Date;
+  dataembalagem: Date;
+  produtor: string;
+  embalador: string;
+  embalagem: string;
+  romaneio: string;
+  talhao: string;
+  lote: string;
+  cidade: string;
+  uf: string;
+}
 
-describe("ProdutoService", () => {
-  let service: ProdutoService;
-  let mockedPrismaQuery: jest.Mock;
-  let mockedMapper: jest.Mock;
+describe("ProdutosService", () => {
+  let service: ProdutosService;
 
   beforeEach(() => {
-    service = new ProdutoService();
-    mockedPrismaQuery = prisma.$queryRaw as jest.Mock;
-    mockedMapper = toCaixaEmbalada as jest.Mock;
-    mockedPrismaQuery.mockClear();
-    mockedMapper.mockClear();
+    service = new ProdutosService();
+    vi.clearAllMocks();
   });
 
-  // --- Bloco de testes para o novo método ---
-  describe("getProdutoByCodigo_CaiEmbalagem", () => {
-    it("deve retornar a CaixaEmbalada MAPEADA quando a procedure encontrar resultado", async () => {
-      const mockCodigo = "123456";
+  it("deve retornar um produto mapeado (CaixaPaletizada) quando encontrado via Stored Procedure", async () => {
+    const mockCodigo = "12345";
 
-      // 1. Simula o resultado CRU vindo do banco de dados para a nova procedure
-      const mockDbResult: CaixasEmbaladaMobileResult = {
-        CaiEmb_CodCaixa: mockCodigo,
-        pro_descricao: "Produto Embalado Teste",
-        rom_dtcolheita: "2025-06-27",
-        rom_dtchegada: "2025-06-27",
-        emp_razaoSocial: "Empresa Teste",
-        embalador: "João da Silva",
-        rom_romaneio: "R54321",
-        rom_talhao: "T1",
-        endereco: "Endereço Teste",
-        cidade: "Cidade Teste",
-        // ... outras propriedades de CaixasEmbaladaMobileResult
-        fkromaneio: 1,
-        caiemb_status: 1,
-      };
-      mockedPrismaQuery.mockResolvedValue([mockDbResult]);
+    // Objeto cru tipado corretamente
+    const mockRawResult: CaixaResultDB = {
+      id: 1,
+      codbarrastag: mockCodigo,
+      produto: "Uva Crimson",
+      datacolheita: new Date("2023-01-01"),
+      dataembalagem: new Date("2023-01-02"),
+      produtor: "Produtor X",
+      embalador: "Embalador Y",
+      embalagem: "Cumbuca",
+      romaneio: "ROM123",
+      talhao: "T1",
+      lote: "LOTE99",
+      cidade: "Petrolina",
+      uf: "PE",
+    };
 
-      // 2. Simula o retorno do novo mapper
-      const mockProdutoMapeado: CaixaEmbalada = {
-        codigoCaixa: mockCodigo,
-        nomeProduto: "Produto Embalado Teste",
-        // ... outras propriedades que o mapper retornaria
-        dataColheita: expect.any(String),
-        dataChegada: expect.any(String),
-        produtorEmpresa: "Empresa Teste",
-        embalagem: "*NI*",
-        nomeEmbalador: "João da Silva",
-        numeroRomaneio: "R54321",
-        talhaoRomaneio: "*NI*",
-        endereco: "Endereço Teste",
-        cidade: "Cidade Teste",
-        tamanhoProduto: "*NI*",
-      };
-      mockedMapper.mockReturnValue(mockProdutoMapeado);
+    // Uso de genéricos no mock para evitar 'as any'
+    vi.spyOn(prisma, "$queryRaw").mockResolvedValue([mockRawResult] as never);
 
-      // 3. Chama o novo serviço
-      const resultado =
-        await service.getProdutoByCodigo_CaiEmbalagem(mockCodigo);
+    const result = await service.buscarPorCodigo(mockCodigo);
 
-      // 4. Verifica se o resultado é o objeto que o MAPPER criou
-      expect(resultado).toEqual(mockProdutoMapeado);
+    expect(prisma.$queryRaw).toHaveBeenCalled();
+    expect(result).not.toBeNull();
+    // A asserção abaixo é segura pois verificamos not.toBeNull antes
+    if (result) {
+      expect(result.lote).toBe("LOTE99");
+      expect(result.nomeProduto).toBe("Uva Crimson");
+    }
+  });
 
-      // 5. Garante que o banco e o novo mapper foram chamados corretamente
-      expect(mockedPrismaQuery).toHaveBeenCalled();
-      expect(mockedMapper).toHaveBeenCalledWith(mockDbResult);
-    });
+  it("deve lançar erro quando a SP não retornar nada", async () => {
+    // Retorno vazio tipado
+    vi.spyOn(prisma, "$queryRaw").mockResolvedValue([] as never);
 
-    it("deve retornar null se a procedure não retornar dados", async () => {
-      mockedPrismaQuery.mockResolvedValue([]);
-
-      const resultado = await service.getProdutoByCodigo_CaiEmbalagem("9999");
-
-      expect(resultado).toBeNull();
-      // Garante que o mapper não foi chamado se não houver dados
-      expect(mockedMapper).not.toHaveBeenCalled();
-    });
+    await expect(service.buscarPorCodigo("99999")).rejects.toThrow();
   });
 });

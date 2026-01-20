@@ -1,9 +1,13 @@
-import express, { Router } from 'express';
-import { ProdutoController } from '../controllers/produtos.controller'; // Ajuste o caminho se necessário
+import { Router } from "express";
+import { ProdutosController } from "../controllers/produtos.controller";
 
-const produtoRoutes: Router = express.Router();
-const produtoController = new ProdutoController();
+const produtosRouter = Router();
+const produtosController = new ProdutosController();
 
-produtoRoutes.get('/:codigo', (req, res) => produtoController.getProdutoPorCodigo(req, res));
-
-export default produtoRoutes;
+// Definição da rota GET
+// Exemplo de chamada: GET /api/rastreamento/12345
+produtosRouter.get(
+  "/rastreio/:codigo",
+  produtosController.handleBuscaRastreio.bind(produtosController)
+);
+export default produtosRouter;

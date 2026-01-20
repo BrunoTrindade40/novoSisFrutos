@@ -4,7 +4,6 @@ import { Controller } from 'react-hook-form';
 import { IMaskInput } from 'react-imask';
 import { type InputBaseComponentProps } from '@mui/material/InputBase';
 
-// Nenhuma mudança necessária aqui
 interface CustomMaskInputProps extends InputBaseComponentProps {
   mask: string | (string | RegExp)[];
   unmask?: boolean;
@@ -12,7 +11,6 @@ interface CustomMaskInputProps extends InputBaseComponentProps {
   overwrite?: boolean;
 }
 
-// Nenhuma mudança necessária aqui
 const MaskedInput = React.forwardRef<HTMLInputElement, CustomMaskInputProps>(
   function MaskedInput(props, ref) {
     const { onChange, ...other } = props;
@@ -61,9 +59,7 @@ export function FormInput({
       control={control}
       render={({ field, fieldState: { invalid } }) => (
         <TextField
-          // Propriedades padrão do TextField que são passadas pelo Controller
           {...field}
-          // Propriedades do TextField
           label={label}
           placeholder={placeholder}
           fullWidth
@@ -71,22 +67,17 @@ export function FormInput({
           error={invalid}
           helperText={error}
           disabled={loading}
-          // *** INÍCIO DA ADAPTAÇÃO ***
-
-          // Propriedades para o COMPONENTE de input (o wrapper 'div')
-          InputProps={{
-            // <-- Com 'I' maiúsculo
-            inputComponent: MaskedInput,
-            disableUnderline: true, // Para a variante "filled"
+          // SOLUÇÃO: Migração de InputProps/inputProps para slotProps
+          slotProps={{
+            input: {
+              // Cast 'as any' para garantir compatibilidade de tipos com o componente de máscara customizado
+              inputComponent: MaskedInput as any,
+              disableUnderline: true,
+            },
+            htmlInput: {
+              'aria-label': ariaLabel,
+            },
           }}
-          // Propriedades para o ELEMENTO <input> interno
-          inputProps={{
-            // <-- Com 'i' minúsculo
-            'aria-label': ariaLabel,
-          }}
-          // *** FIM DA ADAPTAÇÃO ***
-
-          // Estilos específicos para o TextField e seu input
           sx={{
             flexGrow: 1,
             backgroundColor: 'rgba(255,255,255,0.8)',

@@ -1,44 +1,23 @@
 import { Request, Response } from "express";
-import { produtoCodigoSchema } from "../schemas/produtos.schema";
-import { ProdutoService } from "../services/produtos.service";
-import { somenteNumeros } from "../utils/formatter";
+import { ProdutosService } from "../services/produtos.service";
+import { AppError } from "../utils/AppError"; // Supondo que você tenha tratamento de erro
 
-export class ProdutoController {
-  private produtoService = new ProdutoService();
-  async getProdutoPorCodigo(req: Request, res: Response) {
-    try {
-      const parsed = produtoCodigoSchema.safeParse(req.params);
+export class ProdutosController {
+  async handleBuscaRastreio(req: Request, res: Response): Promise<Response> {
+    const { codigo } = req.params;
 
-      if (!parsed.success) {
-        return res.status(400).json({
-          error: "Parâmetro inválido",
-          detalhes: parsed.error.format(),
-        });
-      }
+    // 1. SANITIZAÇÃO: Remove tudo que não é número (guardião)
+    const codigoApenasNumeros = codigo.replace(/\D/g, "");
 
-      let { codigo } = parsed.data;
-      codigo = somenteNumeros(codigo);
-
-      if (!codigo) {
-        return res.status(400).json({ error: "Código é obrigatório." });
-      }
-
-      /* const produto = await this.produtoService.getProdutoByCodigo(codigo); */
-      const produto =
-        await this.produtoService.getProdutoByCodigo_CaiEmbalagem(codigo);
-
-      if (!produto) {
-        return res
-          .status(404)
-          .json({ message: "Nenhum dado encontrado para o código fornecido." });
-      }
-
-      return res.status(200).json(produto);
-    } catch (err) {
-      return res.status(500).json({
-        error: "Erro ao buscar Produtos.",
-        detalhes: err instanceof Error ? err.message : err,
-      });
+    if (!codigoApenasNumeros) {
+      throw new AppError("Código de rastreio inválido.", 400);
     }
+
+    const produtosService = new ProdutosService();
+
+    // 2. Chama o serviço passando apenas números
+    const produto = await produtosService.buscarPorCodigo(codigoApenasNumeros);
+
+    return res.json(produto);
   }
 }

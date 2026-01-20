@@ -1,139 +1,162 @@
-import { useEffect, useRef } from 'react'; // Removido useState daqui
-import { useNavigate, useParams } from 'react-router-dom';
-import { Paper, Button, CircularProgress } from '@mui/material';
-import { useForm, type SubmitHandler, type Control } from 'react-hook-form';
-import { z } from 'zod';
-import { zodResolver } from '@hookform/resolvers/zod';
-import { FormInput } from './FormInput';
+import React, { useState, useEffect } from 'react';
+import { useParams, useNavigate } from 'react-router-dom';
+import { TextField, Button, Box, Alert, CircularProgress } from '@mui/material';
+import SearchIcon from '@mui/icons-material/Search';
 
-import { buscarProdutoPorCodigo } from '../../../services/api';
-import type { Produto } from '../../../types/Produto';
+import {
+  buscarRastreio,
+  type RastreioResponse,
+} from '../../../services/apiService';
+import { ProdutoDetalhes } from '../../Produtos/ProdutoDetalhes';
+import { type Produto } from '../../../types/Produto';
+import { aplicaMascaraRastreio } from '../../../utils/maskUtils';
 
-const formSchema = z.object({
-  codigo: z
-    .string()
-    .min(1, { message: 'Campo obrigatório' })
-    .regex(/^\d{3}-\d{3}\.\d{3}\.\d{3}$/, {
-      message: 'Formato inválido: Ex: 000-000.000.000',
-    }),
-});
+const adaptarParaProduto = (data: RastreioResponse): Produto => {
+  return {
+    produto: data.nomeProduto,
+    lote: data.lote || 'Não informado',
+    produtor: data.produtorEmpresa,
+    dataColheita: data.dataColheita,
+    origem: data.cidade,
+    talhao: data.talhaoRomaneio,
+    embalador: data.nomeEmbalador,
+    dataChegada: data.dataChegada,
+    embalagem: data.embalagem,
+    codigoCaixa: data.codigoCaixa,
+    endereco: data.endereco,
+    cidade: data.cidade,
+    tamanhoProduto: data.tamanhoProduto,
+  };
+};
 
-export type FormValues = z.infer<typeof formSchema>;
-
-// 1. ADICIONAR a prop 'isLoading' na interface
-interface FormRastreamentoProps {
-  onSearchResult: (result: {
-    produto: Produto | null;
-    erro: string | null;
-  }) => void;
-  isLoading: boolean; // Prop adicionada!
-  initialCodigo?: string;
-}
-
-export function FormRastreamento({
-  onSearchResult,
-  isLoading,
-  initialCodigo,
-}: FormRastreamentoProps) {
-  // 2. REMOVER o estado de loading local. Ele agora vem das props.
-  // const [loading, setLoading] = useState(false); // <--- LINHA REMOVIDA
-
+export function FormRastreamento() {
+  const { codigoNaUrl } = useParams<{ codigoNaUrl: string }>();
   const navigate = useNavigate();
-  const { codigoNaUrl } = useParams<{ codigoNaUrl?: string }>();
-  const initialSubmitRef = useRef(false);
 
-  const {
-    control,
-    handleSubmit,
-    reset,
-    formState: { errors },
-    setValue,
-  } = useForm<FormValues>({
-    resolver: zodResolver(formSchema),
-    defaultValues: { codigo: '' },
-  });
+  const [codigoInput, setCodigoInput] = useState('');
+  const [produto, setProduto] = useState<Produto | null>(null);
+  const [loading, setLoading] = useState(false);
+  const [erro, setErro] = useState<string | null>(null);
 
-  const onSubmit: SubmitHandler<FormValues> = async (data) => {
-    // 3. REMOVER as chamadas setLoading(). O pai agora controla isso.
-    // setLoading(true); // <--- LINHA REMOVIDA
-    onSearchResult({ produto: null, erro: null });
+  useEffect(() => {
+    if (codigoNaUrl) {
+      const mascarado = aplicaMascaraRastreio(codigoNaUrl);
+      setCodigoInput(mascarado);
+      realizarBusca(codigoNaUrl);
+    } else {
+      setCodigoInput('');
+      setProduto(null);
+      setErro(null);
+    }
+  }, [codigoNaUrl]);
+
+  const realizarBusca = async (cod: string) => {
+    const limpo = cod.replace(/\D/g, '');
+    if (limpo.length < 5) {
+      if (cod) setErro('Código muito curto.');
+      return;
+    }
+
+    setLoading(true);
+    setErro(null);
+    setProduto(null);
 
     try {
-      const response = await buscarProdutoPorCodigo(data.codigo);
-      if (!response.ok) {
-        throw new Error('Produto não encontrado ou falha na comunicação.');
-      }
-      const result: Produto = await response.json();
-
-      if (!result || Object.keys(result).length === 0) {
-        onSearchResult({
-          produto: null,
-          erro: 'Produto não encontrado para o código informado.',
-        });
+      const dados = await buscarRastreio(limpo);
+      if (dados) {
+        setProduto(adaptarParaProduto(dados));
       } else {
-        onSearchResult({ produto: result, erro: null });
-        reset({ codigo: '' });
-        if (data.codigo !== codigoNaUrl) {
-          navigate(`/rastrear/${data.codigo}`);
-        }
+        setErro('Produto não encontrado.');
       }
-    } catch (error) {
-      onSearchResult({
-        produto: null,
-        erro: error instanceof Error ? error.message : 'Ocorreu um erro.',
-      });
+    } catch (err: any) {
+      console.error('Erro front:', err);
+      setErro(err.message || 'Erro ao buscar produto.');
+      setProduto(null);
+    } finally {
+      setLoading(false);
     }
-    // O 'finally' que chamava setLoading(false) também não é mais necessário aqui.
   };
 
-  // O useEffect permanece igual
-  useEffect(() => {
-    if (initialCodigo && !initialSubmitRef.current) {
-      const codigoRegex = /^\d{3}-\d{3}\.\d{3}\.\d{3}$/;
-      if (codigoRegex.test(initialCodigo)) {
-        setValue('codigo', initialCodigo);
-        handleSubmit(onSubmit)();
-        initialSubmitRef.current = true;
-      }
+  const handleSubmit = (e: React.FormEvent) => {
+    e.preventDefault();
+    const limpo = codigoInput.replace(/\D/g, '');
+    if (limpo) {
+      navigate(`/rastrear/${codigoInput}`);
     }
-  }, [initialCodigo, setValue, handleSubmit, onSubmit]);
+  };
 
   return (
-    <form onSubmit={handleSubmit(onSubmit)}>
-      <Paper
-        sx={{
-          backgroundColor: 'primary.main',
-          p: 2,
-          mb: 4,
-          display: 'flex',
-          alignItems: 'center',
-          gap: 2,
-          borderRadius: 1,
-        }}
+    <Box sx={{ width: '100%', maxWidth: 800, mx: 'auto' }}>
+      <Box
+        component="form"
+        onSubmit={handleSubmit}
+        sx={{ display: 'flex', flexDirection: 'column', gap: 2, mt: 2 }}
       >
-        <FormInput
-          control={control as Control<FormValues>}
-          name="codigo"
-          ariaLabel="Código"
-          placeholder="000-000.000.000"
-          error={errors.codigo?.message}
-          loading={isLoading} // 4. A prop 'loading' agora vem diretamente do pai
+        <TextField
+          fullWidth
+          label="Código de Rastreio"
+          placeholder="Ex: 002.000.000.947"
+          value={codigoInput}
+          onChange={(e) =>
+            setCodigoInput(aplicaMascaraRastreio(e.target.value))
+          }
+          disabled={loading}
+          autoFocus
+          // SOLUÇÃO: Migração para slotProps
+          slotProps={{
+            input: {
+              style: { backgroundColor: '#fff' }, // Estilo do container do input
+            },
+            htmlInput: {
+              inputMode: 'numeric',
+              maxLength: 18,
+              // 'aria-label': 'Código de Rastreio' // Boa prática de acessibilidade
+            },
+          }}
+          // Estilização movida para 'sx' para evitar problemas de tipagem e warnings em inputProps
+          sx={{
+            '& .MuiInputBase-input': {
+              fontSize: { xs: '1.1rem', sm: '1.25rem' },
+              padding: { xs: '12px 14px', sm: '16.5px 14px' },
+              letterSpacing: { xs: '1px', sm: '2px' },
+              textAlign: 'center',
+            },
+          }}
         />
+
         <Button
           type="submit"
           variant="contained"
-          color="secondary"
-          disabled={isLoading} // 5. O botão também usa a prop 'isLoading'
-          aria-label="Enviar"
-          sx={{ color: 'white', flexShrink: 0 }}
+          size="large"
+          disabled={loading || !codigoInput}
+          startIcon={!loading && <SearchIcon />}
+          sx={{ py: 1.5, fontWeight: 'bold' }}
         >
-          {isLoading ? (
-            <CircularProgress size={24} color="inherit" />
-          ) : (
-            'ENVIAR'
-          )}
+          {loading ? 'Consultando...' : 'Rastrear Produto'}
         </Button>
-      </Paper>
-    </form>
+      </Box>
+
+      {loading && (
+        <Box display="flex" justifyContent="center" mt={4}>
+          <CircularProgress color="primary" />
+        </Box>
+      )}
+
+      {erro && (
+        <Box sx={{ display: 'flex', justifyContent: 'center', mt: 3 }}>
+          <Alert severity="error" sx={{ width: '100%', borderRadius: 2 }}>
+            {erro}
+          </Alert>
+        </Box>
+      )}
+
+      {produto && !loading && (
+        <Box sx={{ mt: 4, animation: 'fadeIn 0.6s ease-out' }}>
+          <ProdutoDetalhes produto={produto} />
+        </Box>
+      )}
+
+      <style>{`@keyframes fadeIn { from { opacity:0; transform:translateY(10px); } to { opacity:1; transform:translateY(0); } }`}</style>
+    </Box>
   );
 }

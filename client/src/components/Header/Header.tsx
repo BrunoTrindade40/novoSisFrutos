@@ -1,79 +1,107 @@
 import React from 'react';
-import { AppBar, Toolbar, Box, Typography, Container } from '@mui/material';
-import { Logo } from '../conteudos/Logo/Logo';
-import imgLogo from '../../assets/images/logo bs transparente.svg';
-import imgLogo2 from '../../assets/images/logo ok_transparente.svg';
+import {
+  AppBar,
+  Toolbar,
+  Box,
+  Typography,
+  Container,
+  Link,
+} from '@mui/material';
+import { BrandConfig } from '../../config/brandConfig';
+import logoArtsoft from '../../assets/images/logo ok_transparente.svg';
 
 export const Header: React.FC = () => {
   return (
-    // 1. Mude a posição para "fixed" para garantir que ele fique fixo no topo da janela.
-    //    Adicione top: 0 e left: 0 para garantir o posicionamento.
     <AppBar
-      position="fixed"
+      position="static"
+      elevation={4}
       sx={{
-        backgroundColor: 'primary.main',
-        boxShadow: 'none',
-        top: 0,
-        left: 0,
+        // Solução de Design: Um azul mais escuro e profundo para contraste da logo Artsoft
+        backgroundColor: '#002147',
+        borderBottom: '4px solid',
+        borderBottomColor: 'secondary.main', // Detalhe sutil com a cor secundária da marca
       }}
     >
-      {/* 2. Mova o Container para DENTRO do AppBar. */}
-      {/* Agora, o fundo do AppBar ocupará 100% da largura,
-          mas o conteúdo (Toolbar) respeitará o maxWidth. */}
+      {/* Solução de Alinhamento: maxWidth="md" alinha com o conteúdo da Home */}
       <Container maxWidth="md">
         <Toolbar
-          disableGutters // Remove os paddings padrão do Toolbar, pois o Container já controla isso.
-          sx={{
-            justifyContent: 'space-between',
-          }}
+          disableGutters
+          sx={{ justifyContent: 'space-between', py: 1.5 }}
         >
-          {/* O restante do seu código continua aqui dentro do Toolbar */}
-          <Logo
-            to="/"
-            imgLogoSrc={imgLogo}
-            sx={{ height: { xs: '55px', sm: '75px' } }}
+          {/* ESQUERDA: Logo do Cliente */}
+          <Box
+            component="img"
+            src={BrandConfig.logo}
+            alt={BrandConfig.name}
+            sx={{
+              height: { xs: 40, sm: 50, md: 60 },
+              width: 'auto',
+              maxWidth: { xs: 100, sm: 180 },
+              objectFit: 'contain',
+              filter: 'drop-shadow(0px 2px 4px rgba(0,0,0,0.3))',
+            }}
           />
-          <Box sx={{ display: 'flex', alignItems: 'center' }}>
-            <Box
+
+          {/* CENTRO: Títulos com Tipografia melhorada */}
+          <Box sx={{ textAlign: 'center', mx: 2, flexGrow: 1 }}>
+            <Typography
+              variant="h6"
+              component="div"
               sx={{
-                marginLeft: '10px',
-                display: 'flex',
-                flexDirection: 'column',
-                alignItems: 'center',
+                fontWeight: 900,
+                textTransform: 'uppercase',
+                lineHeight: 1,
+                fontSize: { xs: '0.9rem', sm: '1.4rem' },
+                letterSpacing: 1.5,
+                color: '#ffffff',
+                textShadow: '1px 1px 2px rgba(0,0,0,0.5)',
               }}
             >
-              <Typography
-                variant="h3"
-                component="h2"
-                sx={{
-                  color: 'text.secondary',
-                  lineHeight: 1.2,
-                  fontWeight: 'bold',
-                  textTransform: 'uppercase',
-                  fontSize: { xs: '2rem', sm: '2.5rem' },
-                }}
-              >
-                Sisfrutos
-              </Typography>
-              <Typography
-                variant="h5"
-                component="h3"
-                sx={{
-                  color: 'text.secondary',
-                  lineHeight: 1.2,
-                  fontWeight: 'bold',
-                  fontSize: { xs: '1.5rem', sm: '1.8rem' },
-                }}
-              >
-                Rastreabilidade
-              </Typography>
-            </Box>
+              SISFRUTOS
+            </Typography>
+            <Typography
+              variant="caption"
+              component="div"
+              sx={{
+                fontSize: { xs: '0.6rem', sm: '0.75rem' },
+                fontWeight: 300,
+                opacity: 0.9,
+                letterSpacing: 3,
+                mt: 0.5,
+                textTransform: 'uppercase',
+                color: '#e0e0e0',
+              }}
+            >
+              Rastreabilidade
+            </Typography>
           </Box>
-          <Logo
-            to="/"
-            imgLogoSrc={imgLogo2}
-            sx={{ height: { xs: '40px', sm: '60px' } }}
-          />
+
+          {/* DIREITA: Logo Artsoft */}
+          <Link
+            href="https://artsoftinformática.com.br"
+            target="_blank"
+            rel="noopener noreferrer"
+            title="Desenvolvido por Artsoft Informática"
+            sx={{
+              display: 'flex',
+              alignItems: 'center',
+              transition: 'transform 0.2s',
+              '&:hover': { transform: 'scale(1.05)' },
+            }}
+          >
+            <Box
+              component="img"
+              src={logoArtsoft}
+              alt="Artsoft Informática"
+              sx={{
+                height: { xs: 28, sm: 38 },
+                width: 'auto',
+                objectFit: 'contain',
+                // Garante que a logo tenha destaque sobre o azul escuro
+                filter: 'drop-shadow(0px 1px 2px rgba(0,0,0,0.3))',
+              }}
+            />
+          </Link>
         </Toolbar>
       </Container>
     </AppBar>

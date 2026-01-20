@@ -1,21 +1,35 @@
-import { BrowserRouter, Routes, Route, Navigate } from 'react-router-dom';
+import React from 'react';
+import { Routes, Route, Navigate } from 'react-router-dom';
+import { Main } from '../components/Main/Main';
 import Home from '../pages/Home';
 
-function AppRouter() {
+export const AppRoutes: React.FC = () => {
   return (
-    <>
-      <BrowserRouter>
-        <Routes>
-          <Route path="/" element={<Home />} />
-          {/* Rota "armadilha": se alguém acessar /rastrear/ SEM código, redireciona para a home */}
-          <Route path="/rastrear/" element={<Navigate to="/" replace />} />
-          {/* Rota para /rastrear/ sem código */}
-          <Route path="/rastrear/:codigoNaUrl" element={<Home />} />
-          {/* Rota para /rastrear/ com código */}
-        </Routes>
-      </BrowserRouter>
-    </>
-  );
-}
+    <Routes>
+      {/* Rota Raiz */}
+      <Route
+        path="/"
+        element={
+          <Main>
+            <Home />
+          </Main>
+        }
+      />
 
-export default AppRouter;
+      {/* Rota de Rastreio com Parâmetro: Renderiza a mesma Home */}
+      {/* A Home vai ler o 'codigoNaUrl' e disparar a busca */}
+      <Route
+        path="/rastrear/:codigoNaUrl"
+        element={
+          <Main>
+            <Home />
+          </Main>
+        }
+      />
+
+      {/* Redirecionamentos de segurança */}
+      <Route path="/rastrear" element={<Navigate to="/" replace />} />
+      <Route path="*" element={<Navigate to="/" replace />} />
+    </Routes>
+  );
+};

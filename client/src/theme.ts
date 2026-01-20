@@ -1,58 +1,78 @@
-// src/theme.ts
 import { createTheme } from '@mui/material/styles';
+import { ptBR } from '@mui/material/locale';
+import { BrandConfig } from './config/brandConfig';
 
-const theme = createTheme({
-  palette: {
-    primary: {
-      main: '#ECE0CA',
-      dark: '#E9ECEF',
+const theme = createTheme(
+  {
+    palette: {
+      primary: {
+        main: BrandConfig.colors.primary, // Azul Escuro (BS) ou Laranja (União)
+        contrastText: '#ffffff',
+      },
+      secondary: {
+        main: BrandConfig.colors.secondary, // Azul Claro (BS) ou Verde (União)
+      },
+      background: {
+        default: BrandConfig.colors.background,
+        paper: '#ffffff',
+      },
+      text: {
+        primary: '#333333',
+        secondary: '#555555',
+      },
     },
-    secondary: {
-      main: '#2C5F2D', // Verde Sóbrio
-      dark: '#003B49', // Azul Escuro
+    typography: {
+      fontFamily: '"Roboto", "Helvetica", "Arial", sans-serif',
+      h1: { fontSize: '2.5rem', fontWeight: 600, color: '#1a1a1a' },
+      h2: {
+        fontSize: '2rem',
+        fontWeight: 500,
+        color: BrandConfig.colors.primary,
+      },
+      button: { textTransform: 'none', fontWeight: 600 },
     },
-    background: {
-      default: '#f5f5f5', // Fundo levemente cinza para o body/html
-      paper: '#f7f2e9', // Fundo branco para cards/caixas de conteúdo
-    },
-    text: {
-      primary: '#003B49',
-      secondary: '#2C5F2D',
-    },
-  },
-  typography: {
-    fontFamily: 'Roboto, sans-serif',
-    h4: {
-      fontWeight: 600,
-      marginBottom: '1rem',
-      marginTop: '1.5rem',
-    },
-    body1: {
-      lineHeight: 1.6,
-      marginBottom: '1rem',
-    },
-  },
-  components: {
-    MuiButton: {
-      styleOverrides: {
-        root: {
-          textTransform: 'none',
+    components: {
+      MuiButton: {
+        styleOverrides: {
+          root: {
+            borderRadius: 8,
+            padding: '10px 24px',
+          },
+          containedPrimary: {
+            // Gradiente sutil para modernizar, opcional, mas elegante
+            background: `linear-gradient(45deg, ${BrandConfig.colors.primary} 30%, ${BrandConfig.colors.secondary} 90%)`,
+            '&:hover': {
+              filter: 'brightness(1.1)',
+            },
+          },
+        },
+      },
+      MuiAppBar: {
+        styleOverrides: {
+          root: {
+            // O cabeçalho agora usa a cor primária exata da marca
+            backgroundColor: BrandConfig.colors.primary,
+            boxShadow: '0px 4px 12px rgba(0,0,0,0.1)',
+          },
+        },
+      },
+      MuiTextField: {
+        styleOverrides: {
+          root: {
+            // Foco do input na cor secundária (Azul Claro na BS)
+            '& .MuiOutlinedInput-root.Mui-focused .MuiOutlinedInput-notchedOutline':
+              {
+                borderColor: BrandConfig.colors.secondary,
+              },
+            '& .MuiInputLabel-root.Mui-focused': {
+              color: BrandConfig.colors.secondary,
+            },
+          },
         },
       },
     },
-    MuiCssBaseline: {
-      styleOverrides: `
-        html, body, #root {
-          height: 100%;
-        }
-        #root {
-          display: flex;
-          flex-direction: column;
-        }
-      `,
-    },
-    // Outras customizações de componentes podem vir aqui
   },
-});
+  ptBR
+);
 
 export default theme;

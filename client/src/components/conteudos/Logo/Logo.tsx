@@ -1,48 +1,15 @@
-import { Box, styled, type SxProps, type Theme } from '@mui/material';
-import { Link } from 'react-router-dom';
+import React from 'react';
+import { BrandConfig } from '../../../config/brandConfig';
 
-interface LogoProps {
-  to: string;
-  imgLogoSrc: string;
-  sx?: SxProps<Theme>;
-}
-// 1. Crie um componente Link estilizado que aceita a prop sx
-const StyledLink = styled(Link)(({}) => ({
-  display: 'flex', // Para alinhar a imagem (e o texto, se houver)
-  alignItems: 'center',
-  textDecoration: 'none', // Remove o sublinhado padrão dos links
-  color: 'inherit', // Garante que a cor do texto seja herdada (se houver texto)
-  // Adicione quaisquer outros estilos base que você queira aplicar ao link em si
-  // Ex: '&:hover': { opacity: 0.8 },
-}));
-
-export const Logo: React.FC<LogoProps> = ({
-  to,
-  imgLogoSrc,
-  sx,
-}: LogoProps) => {
+// EXPORTAÇÃO NOMEADA (Isso resolve o erro "does not provide an export named Logo")
+export const Logo: React.FC = () => {
   return (
-    <Box
-      sx={{
-        display: 'flex', // Para garantir que o Link e a imagem estejam alinhados
-        alignItems: 'center', // Centraliza verticalmente o conteúdo (se houver texto)
-        // Se houver um tamanho fixo para o container do logo:
-        // width: 'auto',
-        // height: 'auto',
-      }}
-    >
-      <StyledLink to={to}>
-        <Box
-          component="img"
-          src={imgLogoSrc}
-          alt="Logo"
-          sx={{
-            width: 'auto',
-            display: 'block',
-            ...sx,
-          }}
-        />
-      </StyledLink>
-    </Box>
+    <img
+      src={BrandConfig.logo}
+      alt={`Logotipo ${BrandConfig.name}`}
+      // Se tiver classes CSS globais, mantenha. Senão, o style abaixo garante o visual.
+      className="logo-principal"
+      style={{ maxHeight: '80px', width: 'auto', objectFit: 'contain' }}
+    />
   );
 };

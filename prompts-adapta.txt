@@ -1,0 +1,389 @@
+Aprenda o código atualizado em anexo, que contém o Front End e o Back End, é vital para que tudo funcione.
+Não Resolveu.
+
+Repetindo os Problemas:
+
+- As informações não estão sendo mostradas, investigue o que pode estar acontecendo;
+
+Refaça o código dos arquivos.
+
+Como um Sênior Full Stack, verifique o código do Back end e do Front End em anexo com bastante Cuidado, Critério e Atenção e indique uma solução que respeite as melhores técnicas de programação e UI/UX.
+
+Seja Direto e Assertivo na Resposta.
+
+Relembrando:
+- Esse mesmo site serve para duas empresas, a BS Frutas e a Frutas União;
+- Ainda está sendo testado no ambiente de desenvolvimento;
+- Incluir trechos de código inteiros, apenas para copiar e colar, com as mudanças propostas, se necessário.
+- Responda em português.
+- Verifique o Histórico para não trazer de volta códigos errados já corrigidos; 
+- BS Frutas e Frutas União tem Bancos de Dados Diferentes;
+- Utilizando Single-Tenant;
+
+O projeto tem as seguintes especificações técnicas:
+
+- FrontEnd: React, Vite, Typescript, Material UI
+- BackEnd: Node.Js, Typescript, Express, Prisma
+
+__________________________________________________________________
+
+Excelente.
+
+
+
+Agora, desejo que, no cabeçalho, fique do jeito em que está na imagem.
+
+- As três coisas do Header com um "Container".
+
+- A logo do Cliente (Frutas BS ou Frutas união) à esquerda.
+
+- No centro, Escrito SisFrutos (em Uppercase) em cima e Rastreabilidade abaixo;
+
+- E o logo da Artsoft, com o link do Site da ArtSoft (https://artsoftinformática.com.br) à direita.
+
+
+
+Como um Sênior Full Stack, verifique o código do Back end e do Front End em anexo com bastante Cuidado, Critério e Atenção e indique uma solução que respeite as melhores técnicas de programação e UI/UX.
+Seja Direto e Assertivo na Resposta.
+
+Relembrando:
+- Cuidado para que não sugira códigos antigos e/ou erro já solucionados; 
+- Esse mesmo site serve para duas empresas, a BS Frutas e a Frutas União;
+- Ainda está sendo testado no ambiente de desenvolvimento;
+- Incluir trechos de código inteiros, apenas para copiar e colar, com as mudanças propostas, se necessário.
+- Responda em português.
+- Verifique o Histórico para não trazer de volta códigos errados já corrigidos; 
+- BS Frutas e Frutas União tem Bancos de Dados Diferentes;
+- Utilizando Single-Tenant;
+
+O projeto tem as seguintes especificações técnicas:
+- FrontEnd: React, Vite, Typescript, Material UI
+- BackEnd: Node.Js, Typescript, Express, Prisma
+
+__________________________________________________________________
+
+Antes de continuarmos, tenho que esclarecer algumas coisas:
+- BS Frutas e Frutas União tem Bancos de Dados Diferentes, como já foi dito anteriormente;
+- O Zod deve fazer a verificação do código de rastreio, se vem após a validação, ou seja, como o modelo XXX-XXX.XXX.XXX; 
+- E após essa verificação do Zod, e só após a verificação, é que a String tem que passar por um filtro, e deixar a String apenas com os Números;
+- Após a String estar apenas com Numeros, é que poderá ser usado na função prisma.$queryRaw;
+- E a prisma.$queryRaw chamar a Stored Procedure: "EXEC sp_p_CaixasPaletizada_mobile @codcaixa = ${codigo}, @retornaDados = 1"
+- E, quando o resultado de prisma.$queryRaw vier, passar pelo mapping que consta no arquivo src/mappers/caixaPaletizada.ts; 
+- Após o retorno pelo Mappers, o resultado retorna para o Front End;
+
+src/mappers/caixaPaletizada.ts:
+```typescript
+import { CaixaPaletizada } from "../controllers/protocols";
+import { CaixasPaletizadaMobileResult } from "../models/caixas";
+
+// Função auxiliar para normalizar chaves do objeto para minúsculas
+// Ex: Converte { "PalCai_Codigo": "123" } para { "palcai_codigo": "123" }
+const normalizeKeys = (obj: any): any => {
+  if (!obj) return {};
+  const newObj: any = {};
+  Object.keys(obj).forEach((key) => {
+    newObj[key.toLowerCase()] = obj[key];
+  });
+  return newObj;
+};
+
+// Função auxiliar para garantir string segura
+const safeString = (value: any): string => {
+  if (value === null || value === undefined) return "";
+  return String(value).trim();
+};
+
+export function toCaixaPaletizada(
+  dbResultRaw: CaixasPaletizadaMobileResult
+): CaixaPaletizada {
+  if (!dbResultRaw) {
+    throw new Error("Dados do produto inválidos ou vazios no Mapper.");
+  }
+
+  // 1. SOLUÇÃO SÊNIOR: Normaliza o objeto "cru" do banco
+  // Isso garante que dbResult.palcai_codigo funcione mesmo se o banco mandar PalCai_Codigo
+  const dbResult = normalizeKeys(dbResultRaw);
+
+  return {
+    codigoCaixa: safeString(dbResult.palcai_codigo),
+    nomeProduto: safeString(dbResult.pro_descricao),
+    dataColheita: safeString(dbResult.rom_dtcolheita),
+    dataChegada: safeString(dbResult.rom_dtchegada || dbResult.rom_dtcolheita),
+    produtorEmpresa: safeString(dbResult.emp_razaosocial), // Note: razaosocial tudo minúsculo após normalizar
+    embalagem: safeString(dbResult.cai_descricao),
+    nomeEmbalador: safeString(dbResult.cademb_nome),
+    numeroRomaneio: safeString(dbResult.rom_romaneio),
+
+    // Fallback robusto para talhão
+    talhaoRomaneio: safeString(dbResult.rom_talhao),
+
+    endereco: safeString(dbResult.endereco),
+    cidade: safeString(dbResult.cidade),
+    tamanhoProduto: safeString(dbResult.tam_descricao),
+  };
+}
+```
+
+Refaça o código do arquivo, e refaça outros códigos caso seja necessário.
+
+Como um Sênior Full Stack, verifique o código do Back end e do Front End em anexo com bastante Cuidado, Critério e Atenção e indique uma solução que respeite as melhores técnicas de programação e UI/UX.
+
+Seja Direto e Assertivo na Resposta.
+Relembrando:
+- Esse mesmo site serve para duas empresas, a BS Frutas e a Frutas União;
+- Ainda está sendo testado no ambiente de desenvolvimento;
+- Incluir trechos de código inteiros, apenas para copiar e colar, com as mudanças propostas, se necessário.
+- Responda em protuguês.
+- Verifique o Histórico para não trazer de volta códigos errados já corrigidos; 
+- BS Frutas e Frutas União tem Bancos de Dados Diferentes;
+
+O projeto tem as seguintes especificações técnicas:
+- FrontEnd: React, Vite, Typescript, Material UI
+- BackEnd: Node.Js, Typescript, Express, Prisma
+
+__________________________________________________________________
+
+Os Próximos passos são:
+- Retirar o campo Empresa, apenas o código de Rastreio deve ser enviado;
+- Implementar a requisição e a resposta para o BackEnd, a busca utilizará apenas a Stored Procedure sp_p_CaixasPaletizada_mobile, como mostra uma das imagens em anexo;
+
+```
+SQL
+
+EXEC sp_p_CaixasPaletizada_mobile @codcaixa = '002000000947', @retornaDados = 1;
+```
+
+A Query Original:
+
+```
+SQL
+
+USE [sisfrutos_BS]
+GO
+/****** Object:  StoredProcedure [dbo].[sp_p_CaixasPaletizada_mobile]    Script Date: 04/12/2025 13:23:45 ******/
+SET ANSI_NULLS ON
+GO
+SET QUOTED_IDENTIFIER ON
+GO
+ALTER proc [dbo].[sp_p_CaixasPaletizada_mobile]
+( @codcaixa varchar(15) , 
+  @retornaDados int = 0,
+  @resultado int =0 output)
+as
+declare @fkpalet int 
+-- retorna o nr. do palet ou 0 se a caixa
+-- não estiver paletizada
+set @fkpalet=0
+
+select @Fkpalet= fkpalet from paletcaixas with (readuncommitted)
+         where PalCai_Codigo=@codcaixa
+
+if @retornadados=1
+   select fkpalet,
+          idromaneio,
+		  palcai_codigo,
+          rom_romaneio,
+		  rom_talhao,
+		  rom_lote,
+		  rom_dtcolheita,
+	      emp_razaoSocial,
+		  fkempresa,
+		  emp_rua as endereco,
+		  cid_Nome+'-'+emp_uf as cidade,
+		  pro_descricao,
+		  tam_descricao,
+		  cai_descricao
+		  Cademb_nome,
+		  palcai_qtd,
+		  palcai_peso
+      from PaletCaixas with (readuncommitted)
+	      left join sisfrutos..caixa on fkcaixa=idcaixa
+	      left join sisfrutos..MarcaCaixa on Fkmarcacaixa = idMarcaCaixa
+		  left join sisfrutos..tamanho on fktamanho = idtamanho
+		  left join CadEmbalador on Fkembalador = IdCadembalador,
+	    Romaneio with (readuncommitted)
+	     left join sisfrutos..empresa with (readuncommitted) left join sisfrutos..cidade on FkCidade=idCidade
+					on FkEmpresa = Idempresa 
+         left join sisfrutos..produto with (readuncommitted) on fkproduto = idProduto
+		 where fkromaneio=idromaneio
+		   and palcai_codigo = @codcaixa
+                     
+set @resultado = isnull(@fkpalet,0)
+select @resultado
+return isnull(@resultado,0)
+```
+
+Como um Sênior Full Stack, verifique o código do Back end e do Front End em anexo com bastante Cuidado, Critério e Atenção e indique uma solução que respeite as melhores técnicas de programação e UI/UX.
+
+Seja Direto e Assertivo na Resposta.
+Relembrando:
+- Esse mesmo site serve para duas empresas, a BS Frutas e a Frutas União;
+- Ainda está sendo testado no ambiente de desenvolvimento;
+- Incluir trechos de código inteiros, apenas para copiar e colar, com as mudanças propostas, se necessário.
+
+O projeto tem as seguintes especificações técnicas:
+- FrontEnd: React, Vite, Typescript, Material UI
+- BackEnd: Node.Js, Typescript, Express, Prisma
+
+__________________________________________________________________
+
+Após implementar o que foi sugerido na última resposta, o erro ainda está aparecendo, então ainda não se resolveu.
+
+
+
+Console.log:
+
+"[INFO] 13:55:51 Restarting: C:\Code\novoSisFrutos\server\src\mappers\caixaPaletizada.ts has been modified
+
+Servidor rodando no ambiente [development] na porta 3000
+
+Origens permitidas: http://localhost:5173, http://127.0.0.1:5173, http://localhost:3000, http://127.0.0.1:3000, http://localhost, http://127.0.0.1
+
+prisma:info Starting a mssql pool with 5 connections.
+
+prisma:info Performing a TLS handshake
+
+prisma:warn Trusting the server certificate without validation.
+
+prisma:info TLS handshake successful
+
+prisma:info Database change from 'sisfrutos_BS' to 'master'
+
+prisma:info Contexto do banco de dados alterado para 'sisfrutos_BS'.
+
+prisma:info SQL collation changed to windows-1252
+
+prisma:info Microsoft SQL Server version 3490119695
+
+prisma:info Packet size change from '4096' to '4096'
+
+prisma:error O nome da coluna ou o número de valores fornecidos não corresponde à definição da tabela.
+
+prisma:query 
+
+        CREATE TABLE #RastreioTemp (
+
+          fkpalet INT,
+
+          idromaneio INT,
+
+          rom_romaneio VARCHAR(255),
+
+          rom_talhao VARCHAR(255),
+
+          rom_lote VARCHAR(255), -- Coluna reinserida para casar com a SP
+
+          rom_dtcolheita DATETIME,
+
+          rom_dtchegada DATETIME,
+
+          emp_razaoSocial VARCHAR(255),
+
+          fkempresa INT,
+
+          endereco VARCHAR(255),
+
+          cidade VARCHAR(255),
+
+          pro_descricao VARCHAR(255),
+
+          tam_descricao VARCHAR(255),
+
+          cai_descricao VARCHAR(255),
+
+          Cademb_nome VARCHAR(255),
+
+          palcai_qtd DECIMAL(18,2),
+
+          palcai_peso DECIMAL(18,2),
+
+          palcai_codigo VARCHAR(255)
+
+        );
+
+
+
+        -- INSERT EXEC captura o resultado da SP na tabela temporária
+
+        INSERT INTO #RastreioTemp
+
+        EXEC sp_p_CaixasPaletizada_mobile @codcaixa = '002000000947', @retornaDados = 1;       
+
+
+
+        SELECT * FROM #RastreioTemp;
+
+
+
+        DROP TABLE #RastreioTemp;
+
+
+
+prisma:error
+
+Invalid `prisma.$queryRawUnsafe()` invocation:
+
+
+
+
+
+Raw query failed. Code: `213`. Message: `O nome da coluna ou o número de valores fornecidos não corresponde à definição da tabela.`
+
+Erro SQL Rastreio: PrismaClientKnownRequestError: 
+
+Invalid `prisma.$queryRawUnsafe()` invocation:
+
+
+
+
+
+Raw query failed. Code: `213`. Message: `O nome da coluna ou o número de valores fornecidos não corresponde à definição da tabela.`
+
+    at Zn.handleRequestError (C:\Code\novoSisFrutos\server\node_modules\.prisma\client\runtime\library.js:124:7459)
+
+    at Zn.handleAndLogRequestError (C:\Code\novoSisFrutos\server\node_modules\.prisma\client\runtime\library.js:124:6784)
+
+    at Zn.request (C:\Code\novoSisFrutos\server\node_modules\.prisma\client\runtime\library.js:124:6491)
+
+    at l (C:\Code\novoSisFrutos\server\node_modules\.prisma\client\runtime\library.js:133:9778)
+
+    at buscarPorCodigoComSP (C:\Code\novoSisFrutos\server\src\controllers\rastreio.controller.ts:65:29) {
+
+  code: 'P2010',
+
+  meta: {
+
+    code: '213',
+
+    message: 'O nome da coluna ou o número de valores fornecidos não corresponde à definição da tabela.'
+
+  },
+
+  clientVersion: '6.9.0'
+
+}"
+
+
+
+Repetindo o Problema:
+- As informações não estão sendo mostradas, Não está trazendo os dados do banco, investigue o que pode estar acontecendo;
+
+Refaça o código dos arquivos.
+
+Como um Sênior Full Stack, verifique o código do Back end e do Front End em anexo com bastante Cuidado, Critério e Atenção e indique uma solução que respeite as melhores técnicas de programação e UI/UX.
+
+Seja Direto e Assertivo na Resposta.
+
+Relembrando:
+- Cuidado para que não sugira códigos antigos e/ou erro já solucionados; 
+- Esse mesmo site serve para duas empresas, a BS Frutas e a Frutas União;
+- Ainda está sendo testado no ambiente de desenvolvimento;
+- Incluir trechos de código inteiros, apenas para copiar e colar, com as mudanças propostas, se necessário.
+- Responda em português.
+- Verifique o Histórico para não trazer de volta códigos errados já corrigidos; 
+- BS Frutas e Frutas União tem Bancos de Dados Diferentes;
+- Utilizando Single-Tenant;
+
+O projeto tem as seguintes especificações técnicas:
+- FrontEnd: React, Vite, Typescript, Material UI
+- BackEnd: Node.Js, Typescript, Express, Prisma

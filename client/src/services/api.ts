@@ -1,11 +1,31 @@
-// Acede à variável de ambiente de forma segura.
-const API_URL = import.meta.env.VITE_API_BASE_URL;
+import axios from 'axios';
 
-export async function buscarProdutoPorCodigo(
-  codigo: string
-): Promise<Response> {
-  // Constrói a URL final usando a variável de ambiente.
-  const url = `${API_URL}/produtos/${codigo}`;
+// Cria uma instância do axios com configurações padrão.
+// Todas as chamadas de serviço usarão esta instância.
+const api = axios.create({
+  /**
+   * A baseURL é configurada para '/api'. O proxy do Vite (em vite.config.ts)
+   * interceptará qualquer requisição que comece com '/api' e a redirecionará
+   * para o servidor backend, tornando a configuração agnóstica ao ambiente.
+   */
+  baseURL: '/api',
+  headers: {
+    'Content-Type': 'application/json',
+  },
+});
 
-  return fetch(url, { method: 'GET' });
-}
+/**
+ * Interceptadores (opcional, mas recomendado para o futuro):
+ * Aqui você pode adicionar lógica para, por exemplo, injetar um token de autenticação
+ * em todas as requisições ou lidar com erros globais (como 401 Unauthorized).
+ *
+ * api.interceptors.request.use(config => {
+ *   const token = localStorage.getItem('authToken');
+ *   if (token) {
+ *     config.headers.Authorization = `Bearer ${token}`;
+ *   }
+ *   return config;
+ * });
+ */
+
+export default api;

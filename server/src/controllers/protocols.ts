@@ -29,6 +29,7 @@ export interface CaixaPaletizada {
   embalagem: string;
   numeroRomaneio: string;
   talhaoRomaneio: string;
+  lote: string; // <--- ADICIONADO: O campo que faltava
   endereco: string;
   cidade: string;
   tamanhoProduto: string;

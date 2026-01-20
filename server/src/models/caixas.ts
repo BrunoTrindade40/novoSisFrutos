@@ -2,7 +2,8 @@ export interface CaixasPaletizadaMobileResult {
   fkpalet: number;
   idromaneio: number;
   rom_romaneio: string;
-  rom_talhao: string;
+  rom_talhao: string | null;
+  rom_lote?: string; // Adicionado como opcional
   rom_dtcolheita: string;
   rom_dtchegada: string;
   emp_razaoSocial: string;
@@ -17,6 +18,7 @@ export interface CaixasPaletizadaMobileResult {
   palcai_peso: number;
   palcai_codigo: string;
 }
+
 export interface CaixasEmbaladaMobileResult {
   fkromaneio: number;
   rom_romaneio: string;

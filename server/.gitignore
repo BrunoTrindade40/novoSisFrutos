@@ -33,3 +33,5 @@ obfuscate.js
 
 # ... outros ...
 src/config/production.config.ts
+# Arquivos de configuração de cliente
+config/
